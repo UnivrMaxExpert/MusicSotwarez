@@ -1,0 +1,65 @@
+/* Frosted background (original gradient) */
+.frosted-layer {
+    -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #8962ea, #8018ff);
+}
+
+/* Registration box con colore originale */
+.registration-box {
+    -fx-background-color: rgba(30, 30, 30, 0.6); /* Più trasparente e neutro */
+    -fx-background-radius: 16;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.25, 0, 6);
+    -fx-border-color: rgba(255, 255, 255, 0.15); /* Filo di contorno sottile */
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-insets: 0;
+}
+
+/* Title text */
+.title-text {
+    -fx-font-size: 26px;
+    -fx-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Text fields */
+.text-field, .password-field {
+    -jfx-focus-color: #6f00ff;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.5);
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-width: 0 0 1 0;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Button */
+.register-button {
+    -fx-background-color: linear-gradient(to right, #6f00ff, #4f1fc8);
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 2);
+}
+
+.register-button:hover{
+    -fx-background-color: linear-gradient(to right, #6f00ff, #3a3a60 );
+}
+
+/* Hyperlink */
+.login-link {
+    -fx-text-fill: #7e58e1;
+    -fx-font-size: 16px;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.login-link:hover {
+    -fx-text-fill: #6233df;
+}
+
+.error-label {
+    -fx-text-fill: #EF5350;
+    -fx-font-size: 12px;
+}

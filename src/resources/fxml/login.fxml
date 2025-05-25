@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Pos?>
+
+<AnchorPane fx:id="rootPane"
+            prefHeight="600.0" prefWidth="800.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.dashapp.controller.LoginController"
+            stylesheets="@../css/login-style.css">
+
+    <children>
+
+        <!-- Frosted glass layer (blur via Java) -->
+        <Pane fx:id="blurLayer"
+              styleClass="frosted-layer"
+              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+
+        <!-- Login box -->
+        <VBox fx:id="loginBox" alignment="CENTER" spacing="20"
+              prefWidth="400" prefHeight="360"
+              styleClass="login-box"
+              AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0"
+              AnchorPane.topAnchor="120.0" AnchorPane.bottomAnchor="120.0">
+
+            <ImageView fx:id="img" fitHeight="80.0" fitWidth="180.0">
+                <Image url="@../images/glogo.gif" preserveRatio="true"/>
+            </ImageView>
+
+            <Label text="Software Spaccio Musica" styleClass="title-label"/>
+
+            <VBox spacing="10" alignment="CENTER">
+                <JFXTextField fx:id="usernameField" promptText="Username"
+                              styleClass="text-field" maxWidth="250"/>
+                <JFXPasswordField fx:id="passwordField" promptText="Password"
+                                  styleClass="password-field" maxWidth="250"/>
+            </VBox>
+
+            <JFXButton text="Login" onAction="#handleLogin"
+                       styleClass="login-button" prefWidth="200"/>
+
+            <Hyperlink text="Non hai un account? Registrati"
+                       onAction="#handleGoToRegister"
+                       styleClass="register-link"/>
+
+            <Label fx:id="errorLabel" text="" visible="false"
+                   styleClass="error-label"/>
+        </VBox>
+
+    </children>
+</AnchorPane>

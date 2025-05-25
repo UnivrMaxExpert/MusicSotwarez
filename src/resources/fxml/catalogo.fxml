@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane fx:id="root"
+            stylesheets="@../css/catalogo-style.css"
+            styleClass="catalog-background"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.dashapp.controller.CatalogoController">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox fx:id="sidebar" styleClass="sidebar">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label styleClass="sidebar-title" text="Filtri" />
+            <JFXTextField promptText="Cerca per titolo" />
+            <JFXTextField promptText="Artista" />
+        </VBox>
+    </left>
+
+    <!-- Barra superiore -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
+            <JFXButton fx:id="filterButton"
+                       onAction="#toggleSidebar"
+                       text="🔍"
+                       prefHeight="60"
+                       prefWidth="60"
+                       minHeight="60"
+                       minWidth="60"
+                       maxHeight="60"
+                       maxWidth="60"
+                       styleClass="icon-button"/>
+            <Text text="Catalogo Brani" styleClass="catalog-title"/>
+            <fx:include source="navbar.fxml" fx:id="nav"/>
+        </HBox>
+    </top>
+
+    <!-- Contenuto centrale -->
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" styleClass="scroll-pane-custom">
+            <VBox fx:id="braniContainer" spacing="15">
+                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                <!-- I brani vengono aggiunti dinamicamente qui -->
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

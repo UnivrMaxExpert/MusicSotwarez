@@ -1,0 +1,74 @@
+.root {
+    -fx-background-color: transparent;
+}
+
+/* Frosted background layer */
+.frosted-layer {
+    -fx-background-color: linear-gradient(to right, #2196F3, #21CBF3);
+    -fx-background-radius: 0;
+}
+
+/* Login box */
+.login-box {
+    -fx-background-color: rgba(30, 30, 30, 0.6); /* Più trasparente e neutro */
+    -fx-background-radius: 16;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.25, 0, 6);
+    -fx-border-color: rgba(255, 255, 255, 0.15); /* Filo di contorno sottile */
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-insets: 0;
+}
+/* Title */
+.title-label {
+    -fx-font-size: 20px;
+    -fx-fill: #e0e0e0;
+    -fx-font-weight: bold;
+    -fx-min-width: 100px;
+    -fx-text-fill: #e0e0e0;
+    -fx-text-fill: white;
+}
+
+/* Fields */
+.text-field,
+.password-field {
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.5);
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-width: 0 0 1 0;
+    -fx-focus-color: #64b5f6;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Button */
+.login-button {
+    -fx-background-color: linear-gradient(to right, #2196F3, #21CBF3);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.3, 0, 2);
+}
+
+/* Hover effect */
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #1E88E5, #1DE9B6);
+}
+
+/* Link */
+.register-link {
+    -fx-text-fill: #90CAF9;
+    -fx-underline: true;
+    -fx-font-size: 16px;
+}
+
+.register-link:hover {
+    -fx-text-fill: #42A5F5;
+}
+
+/* Error label */
+.error-label {
+    -fx-text-fill: #EF5350;
+    -fx-font-size: 12px;
+}

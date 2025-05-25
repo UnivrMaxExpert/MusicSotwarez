@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<HBox fx:id="nav"
+      spacing="30"
+      alignment="CENTER_LEFT"
+      prefHeight="60"
+      prefWidth="800"
+      styleClass="navbar"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.dashapp.controller.NavbarController">
+    <children>
+        <JFXButton fx:id="home" text="Home" styleClass="nav-button" onAction="#handleHome"/>
+        <JFXButton fx:id="carica" text="Carica" styleClass="nav-button" onAction="#handleCarica"/>
+        <JFXButton fx:id="catalogo" text="Catalogo" styleClass="nav-button" onAction="#handleCatalogo"/>
+    </children>
+</HBox>

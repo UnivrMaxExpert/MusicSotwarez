@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<StackPane stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.HomeController">
+   <children>
+      <VBox alignment="CENTER" spacing="30.0">
+         <padding>
+            <Insets bottom="40" left="40" right="40" top="40" />
+         </padding>
+         <children>
+            <Text fx:id="titolo" textAlignment="CENTER" style="-fx-text-fill: white">
+               <font>
+                  <Font size="26.0" />
+               </font>
+            </Text>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button fx:id="first" onAction="#handleFirstButton" mnemonicParsing="false" text="CARICA BRANO" />
+                  <Button fx:id="second" onAction="#handleSecondButton" mnemonicParsing="false" text="CATALOGO BRANI" />
+                  <Button fx:id="third" onAction="#handleThirdButton" mnemonicParsing="false" text="ESCI" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>
