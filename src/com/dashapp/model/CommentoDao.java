@@ -26,7 +26,7 @@ public class CommentoDao {
 
     public List<Commento> getCommentiByBranoId(int branoId) throws SQLException {
         String sql = """
-            SELECT c.id, c.parent, c.brano, c.testo, c.data_creazione, u.username
+            SELECT c.id, c.utente, c.parent, c.brano, c.testo, c.data_creazione, u.username
             FROM commenti c JOIN utenti u ON c.utente = u.id
             WHERE c.brano = ?
             ORDER BY c.data_creazione ASC
@@ -47,7 +47,7 @@ public class CommentoDao {
                 } else {
                     c.setParentId(parentId);
                 }
-
+                c.setAutoreId(rs.getInt("utente"));
                 c.setAutore(rs.getString("username"));
                 c.setTesto(rs.getString("testo"));
                 c.setData(rs.getTimestamp("data_creazione").toLocalDateTime());

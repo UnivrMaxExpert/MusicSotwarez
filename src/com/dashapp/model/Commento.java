@@ -15,6 +15,15 @@ public class Commento implements Serializable
         private LocalDateTime data;
         private List<Commento> risposte = new ArrayList<>();
 
+    public int getAutoreId() {
+        return autoreId;
+    }
+
+    public void setAutoreId(int autoreId) {
+        this.autoreId = autoreId;
+    }
+
+    private int autoreId;
         // Getters & setters
 
         public void aggiungiRisposta(Commento risposta) {
@@ -37,9 +46,7 @@ public class Commento implements Serializable
         return branoId;
     }
 
-    public String getAutore() {
-        return autore;
-    }
+    public String getAutore() {return autore;}
 
     public String getTesto() {
         return testo;

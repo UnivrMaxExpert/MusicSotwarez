@@ -16,8 +16,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import com.jfoenix.controls.JFXTextField;
 
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ public class CaricaController implements Initializable {
     @FXML private Spinner<Integer> anno;
     @FXML private Label fileLabel;
     @FXML private Label statusLabel;
+    @FXML private JFXTextField youtubeLink;
 
     private String path;
     private final CaricaDao caricaDao = new CaricaDao();
@@ -58,11 +61,9 @@ public class CaricaController implements Initializable {
 
     @FXML
     private void handleAdd() {
-        // Rimuovi il bottone + dal suo genitore (HBox)
         HBox currentBox = (HBox) add.getParent();
         currentBox.getChildren().remove(add);
 
-        // Nuovo HBox
         HBox newHBox = new HBox(15);
         newHBox.setAlignment(Pos.CENTER_LEFT);
         newHBox.setSpacing(15);
@@ -76,7 +77,6 @@ public class CaricaController implements Initializable {
         newHBox.getChildren().addAll(newText, newTextField, add);
         vboxContainer.getChildren().add(newHBox);
 
-        // Fade in
         newHBox.setOpacity(0);
         FadeTransition fade = new FadeTransition(Duration.millis(300), newHBox);
         fade.setFromValue(0);
@@ -102,14 +102,34 @@ public class CaricaController implements Initializable {
     private void handleInvia() {
         statusLabel.setVisible(false);
         String titoloText = titolo.getText().trim();
+        String linkText = youtubeLink.getText().trim();
         Genere selectedGenere = menugenre.getValue();
 
-        // Validazioni
-        if (titoloText.isEmpty() || path == null || selectedGenere == null) {
+        // Validazioni di base
+        if (titoloText.isEmpty() || selectedGenere == null || (path == null && linkText.isEmpty())) {
             showStatus("Compila tutti i campi obbligatori.", "red");
             return;
         }
 
+        // Controllo: se sono stati inseriti sia un file che un link, errore
+        if (path != null && !linkText.isEmpty()) {
+            showStatus("Inserisci solo un file o un link YouTube, non entrambi.", "red");
+            return;
+        }
+
+        // Controllo: se è stato inserito un link, validalo
+        if (!linkText.isEmpty()) {
+            if (!isYouTubeLink(linkText)) {
+                showStatus("Il link inserito non è un link di YouTube.", "red");
+                return;
+            }
+            if (!isLinkReachable(linkText)) {
+                showStatus("Il link non è raggiungibile.", "red");
+                return;
+            }
+        }
+
+        // Raccogli autori
         List<String> autori = new ArrayList<>();
         for (Node node : vboxContainer.getChildren()) {
             if (node instanceof HBox hbox) {
@@ -132,16 +152,46 @@ public class CaricaController implements Initializable {
         // Crea BranoBean
         BranoBean brano;
         if (anno.getValue() == null) {
-            brano = new BranoBean(titoloText, selectedGenere, path, autori.toArray(new String[0]));
+            brano = new BranoBean(
+                    titoloText,
+                    selectedGenere,
+                    path,
+                    autori.toArray(new String[0])
+            );
         } else {
-            brano = new BranoBean(titoloText, selectedGenere, path, anno.getValue(), autori.toArray(new String[0]));
+            brano = new BranoBean(
+                    titoloText,
+                    selectedGenere,
+                    path,
+                    anno.getValue(),
+                    autori.toArray(new String[0])
+            );
         }
+
 
         try {
             caricaDao.caricaBrano(brano);
             showStatus("Brano caricato con successo!", "green");
         } catch (Exception e) {
             showStatus("Errore durante il caricamento.", "red");
+        }
+    }
+
+    private boolean isYouTubeLink(String link) {
+        return link.matches("^(https?://)?(www\\.)?(youtube\\.com|youtu\\.be)/.*$");
+    }
+
+    private boolean isLinkReachable(String link) {
+        try {
+            URL url = new URL(link);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            int responseCode = connection.getResponseCode();
+            return (200 <= responseCode && responseCode < 400);
+        } catch (Exception e) {
+            return false;
         }
     }
 

@@ -18,7 +18,7 @@ public class Main extends Application
 
             // Crea la scena e aggiunge il CSS se esiste
             Scene scene = new Scene(root);
-            //scene.getStylesheets().add(getClass().getResource("/resources/css/login-style.css").toExternalForm());
+            //scene.getStylesheets().add(getClass().getResource("/resources/css/login-carica-style.css").toExternalForm());
             ViewNavigator.setStage(stage);
             // Imposta e mostra la finestra principale
             ViewNavigator.changeTitle("Login applicazione");

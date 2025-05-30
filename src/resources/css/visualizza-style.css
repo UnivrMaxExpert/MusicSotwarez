@@ -4,11 +4,12 @@
 }
 
 .main-container {
-    -fx-background: #2b2b2b;         /* Colore di sfondo */
-    -fx-border-color: #444444;       /* Colore del bordo */
-    -fx-border-width: 1px;           /* Spessore del bordo */
-    -fx-border-radius: 5px;          /* Angoli arrotondati (opzionale) */
-    -fx-background-radius: 5px;      /* Arrotonda lo sfondo come il bordo */
+    -fx-background: #1e1e1e;
+    -fx-background-color: #1e1e1e;
+    /* Colore del bordo*/
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
     -fx-padding: 10px;
 }
 
@@ -21,6 +22,7 @@
     -fx-padding: 10 20;
     -fx-spacing: 15;
     -fx-alignment: center-left;
+    -fx-border-color: white;
 }
 
 .catalog-title {
@@ -70,28 +72,33 @@
 }
 
 /* SLIDER VOLUME */
-#volumeSlider {
-    -fx-pref-width: 80;
-    -fx-opacity: 0;
-    -fx-background-color: transparent;
-}
-
-#volumeSlider .track {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-}
-
-#volumeSlider .thumb {
-    -fx-background-color: white;
-}
-
-#volumeSlider .thumb:hover {
-    -fx-background-color: #90caf9;
-}
-
 .volume-slider {
-    -fx-pref-height: 4;
-    -fx-padding: 0;
+    -fx-padding: 0.5em;
+    -fx-pref-width: 100px;
 }
+
+/* Track bianco */
+.volume-slider .track {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 4px;
+}
+
+/* Thumb (manopola) rotonda e bianca */
+.volume-slider .thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.0, 0, 1);
+}
+
+/* Optional: Highlight quando si interagisce */
+.volume-slider:focused .thumb {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, #00A2FF, 4, 0.4, 0, 0);
+}
+
 
 /* TEMPO */
 #timeLabel {
@@ -103,6 +110,7 @@
 /* COMMENTI */
 .comment-box {
     -fx-background-color: #1e1e1e;
+    -fx-max-width: 900;
     -fx-padding: 10;
     -fx-background-radius: 5;
     -fx-spacing: 5;
@@ -134,12 +142,13 @@
 }
 
 .comm-field {
-    -fx-background-color: #2a2a2a;
     -fx-text-fill: white;
-    -fx-prompt-text-fill: #888;
-    -fx-border-color: #444;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
+    -fx-prompt-text-fill: rgba(255,255,255,0.5);
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-width: 0 0 1 0;
+    -jfx-focus-color: #ffffff;
+    -fx-faint-focus-color: transparent;
 }
 
 .comm-button {
@@ -163,4 +172,31 @@
 
 .nav-button:hover {
     -fx-text-fill: #90caf9;
+}
+.tab-switch-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+}
+
+.tab-switch-button.active-tab {
+    -fx-background-color: #2a2a2a;
+    -fx-text-fill: white;
+}
+
+.video-wrapper {
+    -fx-background-color: black;
+    -fx-alignment: center;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-position: relative;
+}
+
+.video-controls {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, -2);
 }

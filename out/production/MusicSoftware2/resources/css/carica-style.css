@@ -1,0 +1,128 @@
+/* -------------------------------
+   carica.css - Stili per carica.fxml
+----------------------------------- */
+
+/* Frosted Glass Effect per la finestra principale */
+.border-pane {
+	-fx-background-color: rgba(255, 255, 255, 0.1); /* semi-trasparente */
+	-fx-background-insets: 0;
+	-fx-background-radius: 15;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0.3, 0, 4);
+	-fx-backdrop-filter: blur(20px); /* richiede JavaFX 19+ oppure Gluon FX */
+	-fx-padding: 20;
+	-fx-border-color: rgba(255,255,255,0.2);
+	-fx-border-radius: 15;
+}
+
+/* TESTO */
+.text, .label {
+	-fx-font-size: 16px;
+	-fx-fill: white;
+}
+
+/* LABEL per messaggi di errore/successo */
+#statusLabel {
+	-fx-font-size: 14px;
+	-fx-font-weight: bold;
+}
+
+/* BUTTON BASE */
+.button {
+	-fx-background-color: linear-gradient(to right, #6a11cb, #2575fc);
+	-fx-text-fill: white;
+	-fx-font-size: 16px;
+	-fx-padding: 8 16;
+	-fx-background-radius: 25;
+	-fx-cursor: hand;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.3, 0, 2);
+	-jfx-rippler-fill: white;
+}
+
+/* BUTTON HOVER */
+.button:hover {
+	-fx-background-color: linear-gradient(to right, #2575fc, #6a11cb);
+	-fx-scale-x: 1.05;
+	-fx-scale-y: 1.05;
+	-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.2), 8, 0.4, 0, 3);
+}
+
+/* BUTTON FOCUSED */
+.button:focused {
+	-fx-border-color: white;
+	-fx-border-width: 2;
+	-fx-border-radius: 25;
+}
+
+/* TEXTFIELD BASE */
+.text-field, .jfx-text-field {
+	-fx-background-color: rgba(255, 255, 255, 0.1);
+	-fx-text-fill: white;
+	-fx-font-size: 14px;
+	-fx-background-radius: 10;
+	-fx-border-color: rgba(255, 255, 255, 0.3);
+	-fx-border-radius: 10;
+	-fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+}
+
+/* TEXTFIELD HOVER */
+.text-field:hover, .jfx-text-field:hover {
+	-fx-background-color: rgba(255, 255, 255, 0.15);
+	-fx-border-color: white;
+}
+
+/* TEXTFIELD FOCUSED */
+.text-field:focused, .jfx-text-field:focused {
+	-fx-background-color: rgba(255, 255, 255, 0.2);
+	-fx-border-color: white;
+	-fx-border-width: 2;
+}
+
+/* COMBOBOX BASE */
+.combo-box {
+	-fx-background-color: rgba(255, 255, 255, 0.1);
+	-fx-text-fill: white;
+	-fx-background-radius: 10;
+	-fx-border-color: rgba(255, 255, 255, 0.3);
+	-fx-border-radius: 10;
+}
+
+/* COMBOBOX HOVER */
+.combo-box:hover {
+	-fx-background-color: rgba(255, 255, 255, 0.15);
+	-fx-border-color: white;
+}
+
+/* SPINNER */
+.spinner {
+	-fx-background-color: rgba(255, 255, 255, 0.1);
+	-fx-text-fill: white;
+	-fx-border-color: rgba(255, 255, 255, 0.3);
+	-fx-border-radius: 10;
+}
+
+/* SCROLLPANE */
+.scroll-pane-custom {
+	-fx-background: transparent;
+	-fx-background-color: transparent;
+	-fx-padding: 0;
+}
+
+/* NAVBAR */
+.hbox {
+	-fx-background-color: rgba(31, 31, 31, 0.6);
+	-fx-padding: 10;
+	-fx-background-radius: 10;
+}
+
+/* RIPPLER per JFoenix */
+.jfx-rippler {
+	-jfx-rippler-fill: white;
+}
+
+/* TESTO TITOLO */
+.text {
+	-fx-font-size: 20px;
+	-fx-font-weight: bold;
+	-fx-fill: white;
+	-fx-effect: dropshadow(gaussian, black, 2, 0.5, 0, 1);
+}

@@ -1,24 +1,29 @@
 package com.dashapp.controller;
 
-import com.dashapp.model.BranoBean;
-import com.dashapp.model.CaricaDao;
-import com.dashapp.model.Commento;
-import com.dashapp.model.CommentoDao;
+import com.dashapp.model.*;
 import com.dashapp.view.ViewNavigator;
-import javafx.animation.FadeTransition;
+import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -27,138 +32,282 @@ import java.util.Map;
 public class VisualizzaController {
 
     @FXML private MediaView mediaView;
-    @FXML private Button toggleButton;
-    @FXML private Button forwardButton;
-    @FXML private Button rewindButton;
-    @FXML private Slider progressSlider;
-    @FXML private Label timeLabel;
-    @FXML private VBox commentSection;
-    @FXML private Slider volumeSlider;
-    @FXML private StackPane volumeContainer;
-    @FXML private TextField newCommentField;
-    @FXML private Button pubblicaButton;
-    @FXML private Button scaricaButton;
     @FXML private ImageView audioPlaceholder;
+    @FXML private Button toggleButton, forwardButton, rewindButton, scaricaButton;
+    @FXML private Slider progressSlider, volumeSlider;
+    @FXML private Label timeLabel;
+    @FXML private VBox commentSection, noteSection;
+    @FXML private Button aggiungiNotaButton;
+    @FXML private JFXTextField newCommentField;
+    @FXML private Button pubblicaButton;
+    @FXML private Button commentiButton;
+    @FXML private Button noteButton;
+    @FXML private ScrollPane commentiPane;
+    @FXML private ScrollPane notePane;
+    @FXML private VBox videoControls;
+    @FXML private StackPane videoContainer;
+
     private MediaPlayer mediaPlayer;
-    private BranoBean brano = ViewNavigator.getBrano();;
+    private final BranoBean brano = ViewNavigator.getBrano();
     private final CommentoDao commentoDao = new CommentoDao();
+    private final NotaDao notaDao = new NotaDao();
     private Integer commentoSelezionatoPerRisposta = null;
-    private CaricaDao carica;
+    private boolean branoTerminato = false;
+
     @FXML
-    private void scaricaBrano() {
-        if (brano == null || brano.getFile() == null) {
-            System.out.println("Nessun brano selezionato.");
+    public void initialize() {
+        setupMedia();
+        caricaCommenti();
+        caricaNote();
+        mostraCommenti();
+
+        videoControls.setVisible(false);
+        videoControls.setManaged(false);
+
+        videoContainer.setOnMouseEntered(e -> {
+            videoControls.setVisible(true);
+            videoControls.setManaged(true);
+        });
+
+        videoContainer.setOnMouseExited(e -> {
+            videoControls.setVisible(false);
+            videoControls.setManaged(false);
+        });
+
+        commentiButton.setOnAction(e -> mostraCommenti());
+        noteButton.setOnAction(e -> mostraNote());
+
+        pubblicaButton.setOnAction(e -> pubblicaCommento());
+        aggiungiNotaButton.setOnAction(e -> apriModalInserimentoNota());
+    }
+
+    @FXML
+    private void mostraCommenti() {
+        commentiPane.setVisible(true);
+        commentiPane.setManaged(true);
+        notePane.setVisible(false);
+        notePane.setManaged(false);
+
+        commentiButton.getStyleClass().add("active-tab");
+        noteButton.getStyleClass().remove("active-tab");
+    }
+
+    @FXML
+    private void mostraNote() {
+        commentiPane.setVisible(false);
+        commentiPane.setManaged(false);
+        notePane.setVisible(true);
+        notePane.setManaged(true);
+
+        noteButton.getStyleClass().add("active-tab");
+        commentiButton.getStyleClass().remove("active-tab");
+    }
+
+    private void setupMedia() {
+        String file = brano.getFile();
+        File videoFile = new File(file);
+
+        if (!videoFile.exists()) {
+            System.out.println("File non trovato: " + file);
             return;
         }
-        carica = new CaricaDao();
-        String risultato = carica.scaricaBrano(
-                (Stage) scaricaButton.getScene().getWindow(),
-                brano.getFile()
+
+        String uri = Paths.get(file).toUri().toString();
+        System.out.println("Percorso video generato: " + uri);
+
+        boolean isAudio = file.toLowerCase().endsWith(".mp3") || file.toLowerCase().endsWith(".wav");
+
+        mediaView.setVisible(!isAudio);
+        mediaView.setManaged(!isAudio);
+        audioPlaceholder.setVisible(isAudio);
+        audioPlaceholder.setManaged(isAudio);
+
+        // Imposta rapporto 16:9
+        mediaView.setPreserveRatio(true);
+        mediaView.fitWidthProperty().bind(videoContainer.widthProperty());
+        mediaView.fitHeightProperty().bind(
+                mediaView.fitWidthProperty().divide(16.0/9.0)
         );
 
-        if (risultato != null) {
-            // opzionalmente mostra notifica o alert
-            System.out.println("Download completato.");
-        }
-    }
+        audioPlaceholder.fitWidthProperty().bind(videoContainer.widthProperty());
+        audioPlaceholder.fitHeightProperty().bind(
+                audioPlaceholder.fitWidthProperty().divide(16.0/9.0)
+        );
 
-    @FXML
-    private void showVolumeSlider() {
-        volumeSlider.setVisible(true);
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(200), volumeSlider);
-        fadeIn.setToValue(1.0);
-        fadeIn.play();
-    }
-
-    @FXML
-    private void hideVolumeSlider() {
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(200), volumeSlider);
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> volumeSlider.setVisible(false));
-        fadeOut.play();
-    }
-
-    public void initialize() {
-        String videoPath = new File(brano.getFile()).toURI().toString();
-        if (brano.getFile().endsWith(".mp3") || brano.getFile().endsWith(".wav")) {
-            mediaView.setVisible(false);
-            mediaView.setManaged(false);
-            audioPlaceholder.setVisible(true);
-            audioPlaceholder.setManaged(true);
-            audioPlaceholder.setImage(new Image(getClass().getResourceAsStream("/resources/images/placeholder.gif")));
-        } else {
-            mediaView.setVisible(true);
-            mediaView.setManaged(true);
-            audioPlaceholder.setVisible(false);
-            audioPlaceholder.setManaged(false);
-        }
-        Media media = new Media(videoPath);
-        mediaPlayer = new MediaPlayer(media);
-        mediaView.setMediaPlayer(mediaPlayer);
-
-        toggleButton.setOnAction(e -> {
-            MediaPlayer.Status status = mediaPlayer.getStatus();
-            if (status == MediaPlayer.Status.PLAYING) {
-                mediaPlayer.pause();
-                toggleButton.setText("▶");
+        if (isAudio) {
+            InputStream imgStream = getClass().getResourceAsStream("/resources/images/placeholder.gif");
+            if (imgStream != null) {
+                audioPlaceholder.setImage(new Image(imgStream));
             } else {
-                mediaPlayer.play();
-                toggleButton.setText("⏸");
+                System.out.println("Immagine placeholder non trovata.");
             }
-        });
+        }
 
-        rewindButton.setOnAction(e -> {
-            Duration current = mediaPlayer.getCurrentTime();
-            Duration target = current.subtract(Duration.seconds(5));
-            mediaPlayer.seek(target.lessThan(Duration.ZERO) ? Duration.ZERO : target);
-        });
+        try {
+            Media media = new Media(uri);
+            media.setOnError(() -> System.out.println("Errore Media: " + media.getError().getMessage()));
 
-        forwardButton.setOnAction(e -> {
-            Duration current = mediaPlayer.getCurrentTime();
-            Duration total = mediaPlayer.getTotalDuration();
-            Duration target = current.add(Duration.seconds(5));
-            mediaPlayer.seek(target.greaterThan(total) ? total : target);
-        });
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setOnError(() -> System.out.println("Errore MediaPlayer: " + mediaPlayer.getError().getMessage()));
+            mediaView.setMediaPlayer(mediaPlayer);
 
-        mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
-            if (!progressSlider.isValueChanging()) {
-                progressSlider.setValue(newTime.toSeconds());
+            mediaPlayer.setOnReady(() -> {
+                progressSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
+                mediaPlayer.setVolume(volumeSlider.getValue());
+            });
+
+            mediaPlayer.setOnEndOfMedia(() -> {
+                branoTerminato = true;
+                toggleButton.setText("▶");
+            });
+
+            toggleButton.setOnAction(e -> {
+                Duration currentTime = mediaPlayer.getCurrentTime();
+                Duration totalDuration = mediaPlayer.getTotalDuration();
+
+                if (currentTime.greaterThanOrEqualTo(totalDuration.subtract(Duration.seconds(0.3)))) {
+                    mediaPlayer.seek(Duration.ZERO);
+                    mediaPlayer.play();
+                    toggleButton.setText("⏸");
+                    return;
+                }
+
+                MediaPlayer.Status status = mediaPlayer.getStatus();
+                if (status == MediaPlayer.Status.PLAYING) {
+                    mediaPlayer.pause();
+                    toggleButton.setText("▶");
+                } else {
+                    mediaPlayer.play();
+                    toggleButton.setText("⏸");
+                }
+            });
+
+            rewindButton.setOnAction(e -> {
+                Duration cur = mediaPlayer.getCurrentTime();
+                mediaPlayer.seek(cur.subtract(Duration.seconds(5)).greaterThan(Duration.ZERO)
+                        ? cur.subtract(Duration.seconds(5)) : Duration.ZERO);
+            });
+
+            forwardButton.setOnAction(e -> {
+                Duration cur = mediaPlayer.getCurrentTime();
+                Duration tot = mediaPlayer.getTotalDuration();
+                mediaPlayer.seek(cur.add(Duration.seconds(5)).lessThan(tot) ? cur.add(Duration.seconds(5)) : tot);
+            });
+
+            mediaPlayer.currentTimeProperty().addListener((o, oldT, newT) -> {
+                if (!progressSlider.isValueChanging()) {
+                    progressSlider.setValue(newT.toSeconds());
+                }
+                String current = formatTime(newT);
+                String total = formatTime(mediaPlayer.getTotalDuration());
+                timeLabel.setText(current + " / " + total);
+            });
+
+            progressSlider.setOnMouseReleased(e -> mediaPlayer.seek(Duration.seconds(progressSlider.getValue())));
+            volumeSlider.valueProperty().addListener((o, oldV, newV) -> mediaPlayer.setVolume(newV.doubleValue()));
+
+        } catch (Exception ex) {
+            System.out.println("Errore durante la creazione del MediaPlayer: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    private String formatTime(Duration d) {
+        int secs = (int) Math.floor(d.toSeconds());
+        return String.format("%02d:%02d", secs / 60, secs % 60);
+    }
+
+    @FXML private void scaricaBrano() {
+        if (brano == null || brano.getFile() == null) return;
+        String risultato = new CaricaDao().scaricaBrano(
+                (Stage) scaricaButton.getScene().getWindow(), brano.getFile()
+        );
+        if (risultato != null) System.out.println("Download completato: " + risultato);
+    }
+
+    private void pubblicaCommento() {
+        String testo = newCommentField.getText().trim();
+        if (testo.isEmpty()) return;
+        try {
+            int uid = ViewNavigator.getUtenteId();
+            commentoDao.aggiungiCommento(brano.getId(), uid, testo, commentoSelezionatoPerRisposta);
+            newCommentField.clear();
+            commentoSelezionatoPerRisposta = null;
+            caricaCommenti();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void caricaCommenti() {
+        commentSection.getChildren().clear();
+        try {
+            List<Commento> list = commentoDao.getCommentiByBranoId(brano.getId());
+            Map<Integer, VBox> mappa = new HashMap<>();
+            for (Commento c : list) {
+                VBox box = creaBoxCommento(c);
+                mappa.put(c.getId(), box);
+                if (c.getParentId() == null) {
+                    commentSection.getChildren().add(box);
+                } else {
+                    VBox parent = mappa.get(c.getParentId());
+                    if (parent != null) {
+                        box.setStyle("-fx-padding:5 0 5 20;");
+                        parent.getChildren().add(box);
+                    }
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            commentSection.getChildren().add(new Label("Errore caricamento commenti"));
+        }
+    }
 
-            Duration total = mediaPlayer.getTotalDuration();
-            String currentStr = formatTime(newTime);
-            String totalStr = formatTime(total);
-            timeLabel.setText(currentStr + " / " + totalStr);
-        });
+    private VBox creaBoxCommento(Commento c) {
+        VBox commentBox = new VBox(5);
+        commentBox.getStyleClass().add("comment-box");
 
-        mediaPlayer.setOnReady(() -> {
-            progressSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
-            mediaPlayer.setVolume(volumeSlider.getValue());
-        });
+        Label autoreLabel = new Label(c.getAutore());
+        autoreLabel.getStyleClass().add("comment-author");
 
-        progressSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
-            if (!isChanging) {
-                mediaPlayer.seek(Duration.seconds(progressSlider.getValue()));
-            }
-        });
+        Label testoLabel = new Label(c.getTesto());
+        testoLabel.setWrapText(true);
 
-        progressSlider.setOnMouseReleased(e -> {
-            mediaPlayer.seek(Duration.seconds(progressSlider.getValue()));
-        });
+        Label dataLabel = new Label(c.getData().toString());
+        dataLabel.getStyleClass().add("comment-date");
 
-        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-            mediaPlayer.setVolume(newVal.doubleValue());
-        });
+        Button rispondiButton = new Button("Rispondi");
+        rispondiButton.getStyleClass().add("reply-button");
 
-        pubblicaButton.setOnAction(e -> {
-            String testo = newCommentField.getText().trim();
-            if (!testo.isEmpty()) {
+        VBox replyContainer = new VBox(5);
+        replyContainer.setVisible(false);
+        replyContainer.setManaged(false);
+
+        if (c.getAutoreId() == ViewNavigator.getUtenteId()) {
+            rispondiButton.setDisable(true);
+            rispondiButton.setText("Non puoi rispondere a te stesso");
+            rispondiButton.setStyle("-fx-opacity: 0.6; -fx-cursor: default;");
+        } else {
+            rispondiButton.setOnAction(e -> {
+                boolean isVisible = replyContainer.isVisible();
+                replyContainer.setVisible(!isVisible);
+                replyContainer.setManaged(!isVisible);
+            });
+        }
+
+        JFXTextField rispostaField = new JFXTextField();
+        rispostaField.setPromptText("Rispondi a " + c.getAutore());
+        rispostaField.getStyleClass().add("comm-field");
+
+        Button pubblicaRisposta = new Button("Pubblica");
+        Button annullaRisposta = new Button("Annulla");
+
+        pubblicaRisposta.setOnAction(e -> {
+            String testoRisposta = rispostaField.getText().trim();
+            if (!testoRisposta.isEmpty()) {
                 try {
-                    int utenteId = ViewNavigator.getUtenteId(); // deve essere implementato
-                    commentoDao.aggiungiCommento(brano.getId(), utenteId, testo, commentoSelezionatoPerRisposta);
-                    newCommentField.clear();
-                    commentoSelezionatoPerRisposta = null;
-                    newCommentField.setPromptText("Aggiungi un commento...");
+                    int uid = ViewNavigator.getUtenteId();
+                    commentoDao.aggiungiCommento(brano.getId(), uid, testoRisposta, c.getId());
                     caricaCommenti();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -166,70 +315,52 @@ public class VisualizzaController {
             }
         });
 
-        caricaCommenti();
+        annullaRisposta.setOnAction(e -> {
+            rispostaField.clear();
+            replyContainer.setVisible(false);
+            replyContainer.setManaged(false);
+        });
+
+        replyContainer.getChildren().addAll(rispostaField, new HBox(10, pubblicaRisposta, annullaRisposta));
+        commentBox.getChildren().addAll(autoreLabel, testoLabel, dataLabel, rispondiButton, replyContainer);
+        return commentBox;
     }
 
-    private void caricaCommenti() {
-        commentSection.getChildren().clear();
-        try {
-            List<Commento> commenti = commentoDao.getCommentiByBranoId(brano.getId());
-            Map<Integer, VBox> mappaCommenti = new HashMap<>();
-
-            for (Commento c : commenti) {
-                VBox commentBox = creaBoxCommento(c);
-                mappaCommenti.put(c.getId(), commentBox);
-
-                if (c.getParentId() == null) {
-                    // Commento principale → lo aggiungiamo direttamente alla sezione
-                    commentSection.getChildren().add(commentBox);
-                } else {
-                    // Commento di risposta → cerchiamo il genitore e lo aggiungiamo come figlio
-                    VBox parentBox = mappaCommenti.get(c.getParentId());
-                    if (parentBox != null) {
-                        commentBox.setStyle("-fx-padding: 5 0 5 20;"); // indentazione
-                        parentBox.getChildren().add(commentBox);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Label errore = new Label("Errore nel caricamento dei commenti.");
-            errore.setStyle("-fx-text-fill: red;");
-            commentSection.getChildren().add(errore);
+    private void caricaNote() {
+        noteSection.getChildren().clear();
+        List<NotaBean> note = notaDao.getNotePerBrano(brano.getId());
+        for (NotaBean n : note) {
+            VBox card = new VBox(6);
+            card.getStyleClass().add("comment-box");
+            card.getChildren().addAll(
+                    new Label("Segmento: " + n.getSegmentoInizio() + " - " + n.getSegmentoFine()) {{
+                        getStyleClass().add("comment-author");
+                    }},
+                    new Label(n.getTestoLibero()) {{
+                        setWrapText(true);
+                        getStyleClass().add("comment-text");
+                    }}
+            );
+            noteSection.getChildren().add(card);
         }
     }
 
-    private VBox creaBoxCommento(Commento c) {
-        VBox box = new VBox();
-        box.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 10; -fx-background-radius: 5;");
-        box.setSpacing(5);
+    private void apriModalInserimentoNota() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/nota.fxml"));
+            Parent root = loader.load();
+            NotaController ctrl = loader.getController();
+            ctrl.setBrano(brano);
 
-        Label autore = new Label(c.getAutore());
-        autore.setStyle("-fx-font-weight: bold; -fx-text-fill: #dddddd;");
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Aggiungi Nota");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
 
-        Label testo = new Label(c.getTesto());
-        testo.setWrapText(true);
-        testo.setStyle("-fx-text-fill: white;");
-
-        Label data = new Label(c.getData().toString());
-        data.setStyle("-fx-font-size: 10px; -fx-text-fill: #888;");
-
-        Button rispondiBtn = new Button("Rispondi");
-        rispondiBtn.setStyle("-fx-font-size: 10px;");
-        rispondiBtn.setOnAction(e -> {
-            newCommentField.setPromptText("Rispondi a " + c.getAutore());
-            commentoSelezionatoPerRisposta = c.getId();
-        });
-        box.getStyleClass().add("comment-box");
-
-        box.getChildren().addAll(autore, testo, data, rispondiBtn);
-        return box;
-    }
-
-    private String formatTime(Duration duration) {
-        int totalSeconds = (int) Math.floor(duration.toSeconds());
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-        return String.format("%02d:%02d", minutes, seconds);
+            caricaNote();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

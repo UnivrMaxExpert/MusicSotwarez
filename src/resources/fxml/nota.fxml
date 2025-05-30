@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import org.controlsfx.control.CheckComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.DatePicker?>
+
+<?import javafx.scene.layout.StackPane?>
+<StackPane stylesheets="@../css/nota-style.css" xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.NotaController">
+    <VBox styleClass="frosted-layer" spacing="10.0">
+        <padding>
+            <Insets top="8.0" right="20.0" bottom="8.0" left="20.0" />
+        </padding>
+
+        <Label styleClass="title-label" text="Nuova Nota" />
+
+        <Label text="Strumenti musicali" />
+        <CheckComboBox fx:id="strumentiComboBox" />
+
+        <Label text="Esecutori" />
+        <CheckComboBox fx:id="esecutoriComboBox" />
+
+        <Label text="Durata" />
+        <JFXTextField fx:id="durataField" promptText="Durata del brano" />
+
+        <Label text="Luogo" />
+        <JFXTextField fx:id="luogoField" promptText="Inserisci il luogo" />
+
+        <Label text="Data" />
+        <DatePicker fx:id="dataPicker" promptText="dd-mm-aaaa" />
+
+        <Label text="Segmento Inizio" />
+        <JFXTextField fx:id="segmentoInizioField" promptText="hh:mm:ss" />
+
+        <Label text="Segmento Fine" />
+        <JFXTextField fx:id="segmentoFineField" promptText="hh:mm:ss" />
+
+        <Label text="Aggiunta dettagli" />
+        <JFXTextArea fx:id="testoLiberoArea" promptText="Note / Dettagli" minHeight="100" />
+
+        <HBox spacing="10">
+            <JFXButton fx:id="salvaNotaBtn" onAction="#salvaNota" text="Salva" />
+            <JFXButton fx:id="chiudiBtn" onAction="#chiudi" text="Annulla" />
+        </HBox>
+
+    </VBox>
+</StackPane>

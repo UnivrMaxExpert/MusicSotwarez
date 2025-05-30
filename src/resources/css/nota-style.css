@@ -1,0 +1,101 @@
+/* ===== Root Frosted Background ===== */
+.root {
+    -fx-background-color: linear-gradient(to right, #ff00d4, #00ddff);
+    -fx-background-radius: 0;
+}
+
+/* ===== Frosted Layer con trasparenza ===== */
+.frosted-layer {
+    -fx-background-color:
+            rgba(0, 0, 0, 0.5), /* layer di opacizzazione sopra */
+            rgba(255, 255, 255, 0.08); /* vetro semitrasparente sotto */;
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 20;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 20, 0.3, 0, 6);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1.2;
+    -fx-border-radius: 20;
+}
+
+/* ===== Label generiche ===== */
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.85;
+}
+
+/* ===== Titolo principale ===== */
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* ===== Campi JFXTextField ===== */
+.jfx-text-field {
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 0 0 1 0;
+    -jfx-focus-color: #7A5FFF;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ===== JFXTextArea ===== */
+.jfx-text-area {
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 0 0 1 0;
+    -jfx-focus-color: #7A5FFF;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ===== DatePicker ===== */
+.date-picker {
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 0 0 1 0;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ===== CheckComboBox (ControlsFX) ===== */
+.check-combo-box {
+    -fx-background-color: rgba(50, 50, 50, 0.5);
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 0 0 1 0;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== Pulsanti ===== */
+.jfx-button {
+    -fx-background-color: linear-gradient(to right, #7A5FFF, #A267FF);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30;
+    -fx-padding: 8 24;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0, 0, 2);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.jfx-button:hover {
+    -fx-background-color: linear-gradient(to right, #9B7BFF, #C09DFF);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+
+/* ===== Focus Glow ===== */
+.jfx-text-field:focused,
+.jfx-text-area:focused,
+.date-picker:focused,
+.check-combo-box:focused {
+    -fx-effect: dropshadow(gaussian, #7A5FFF, 6, 0.4, 0, 0);
+}

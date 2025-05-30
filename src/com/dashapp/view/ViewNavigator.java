@@ -92,7 +92,7 @@ public class ViewNavigator {
             navigateToLogin();
         }
     }
-
+    public static void navigateToNota() {loadView("nota.fxml");}
     /**
      * Navigate to the profile view (protected)
      * Will redirect to login if not authenticated
