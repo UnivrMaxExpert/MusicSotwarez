@@ -104,7 +104,12 @@ public class CatalogoController {
             BranoBean brano = new BranoBean(titolo, genereEnum, path, anno, autoriArray);
             brano.setId(id);
             ViewNavigator.setBrano(brano);
-            ViewNavigator.navigateToBrano();
+            if(brano.getFile().startsWith("http")) {
+                ViewNavigator.setLink(brano.getFile());
+                ViewNavigator.navigateToWebView();
+            }
+            else
+                ViewNavigator.navigateToBrano();
         });
 
         hbox.getChildren().addAll(vbox, spacer, playButton);

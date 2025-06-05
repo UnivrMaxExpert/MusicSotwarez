@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:id="root" xmlns:fx="http://javafx.com/fxml"
+      stylesheets="@../css/visualizza-style.css"
+      fx:controller="com.dashapp.controller.SectionController"
+      spacing="10" styleClass="section-component">
+
+    <!-- Info Brano -->
+    <HBox fx:id="infoBrano" alignment="CENTER_LEFT" spacing="10">
+        <VBox spacing="5">
+            <Label fx:id="titoloLabel" styleClass="info-label" text="Titolo" />
+            <Label fx:id="artistaLabel" styleClass="info-label" text="Artista" />
+            <Label fx:id="genereLabel" styleClass="info-label" text="Genere" />
+            <Label fx:id="annoLabel" styleClass="info-label" text="Anno" />
+        </VBox>
+    </HBox>
+
+    <!-- Tab switch -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Button fx:id="commentiButton" styleClass="tab-switch-button" text="Commenti" />
+        <Button fx:id="noteButton" styleClass="tab-switch-button" text="Note" />
+    </HBox>
+
+    <!-- Area Commenti -->
+    <ScrollPane fx:id="commentiPane" fitToWidth="true" managed="true" vbarPolicy="AS_NEEDED" visible="true">
+        <VBox spacing="10" styleClass="main-container">
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
+            <Text fill="WHITE" styleClass="comm-title" text="Commenti" />
+            <TextField fx:id="newCommentField" promptText="Aggiungi un commento..." styleClass="comm-field" />
+            <Button fx:id="pubblicaButton" styleClass="comm-button" text="Pubblica" />
+            <VBox fx:id="commentSection" spacing="10" />
+        </VBox>
+    </ScrollPane>
+
+    <!-- Area Note -->
+    <ScrollPane fx:id="notePane" fitToWidth="true" managed="false" vbarPolicy="AS_NEEDED" visible="false">
+        <VBox spacing="10" styleClass="main-container">
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
+            <Text fill="WHITE" styleClass="comm-title" text="Note" />
+            <Button fx:id="aggiungiNotaButton" styleClass="comm-button" text="Aggiungi Nota" />
+            <VBox fx:id="noteSection" spacing="10" />
+        </VBox>
+    </ScrollPane>
+
+</VBox>

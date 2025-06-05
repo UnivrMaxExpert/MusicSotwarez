@@ -17,13 +17,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CaricaDao
-{
-    private String path;
-    public CaricaDao(){}
+public class CaricaDao {
+    private Path destination;
 
-    public boolean caricaBrano(BranoBean brano)
-    {
+    public CaricaDao() {
+    }
+
+    public boolean caricaBrano(BranoBean brano) {
         String sql = "INSERT INTO brani (titolo, genere, autori, file, anno) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -42,11 +42,14 @@ public class CaricaDao
         }
     }
 
-    public String openfilechooser(Stage stage)
-    {
+    /**
+     * Permette di selezionare un file da importare tramite FileChooser.
+     * Ritorna il path assoluto del file selezionato oppure null.
+     */
+    public String openFileChooser(Stage stage) {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleziona un file");
 
-        // Aggiungi i filtri per i file (mp3, mp4, pdf, jpg, jpeg)
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("File Audio", "*.mp3"),
                 new FileChooser.ExtensionFilter("File Video", "*.mp4"),
@@ -55,41 +58,44 @@ public class CaricaDao
                 new FileChooser.ExtensionFilter("Immagini JPEG", "*.jpeg")
         );
 
-        // Mostra la finestra di dialogo per la selezione del file
-        File selectedFile = fileChooser.showSaveDialog(stage);
-
-        // Verifica se un file è stato selezionato
-        //La parte di scelta del file deve essere gestita da un model richiamato in questa classe DA MODIFICARE
+        File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
-            try {
-                // Ottieni il percorso della cartella user_files/file1
-                Path baseDir = Path.of("src/com/dashapp/user_files/"+ ViewNavigator.getAuthenticatedUser());
-
-                // Crea le cartelle se non esistono
-                if (!Files.exists(baseDir)) {
-                    Files.createDirectories(baseDir);
-                }
-
-                // Costruisci il percorso di destinazione
-                Path destination = baseDir.resolve(selectedFile.getName());
-
-                // Copia il file
-                Files.copy(selectedFile.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
-
-                System.out.println("File copiato in: " + destination.toAbsolutePath());
-                return destination.toAbsolutePath().toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Errore nella copia del file.");
-            }
+            return selectedFile.getAbsolutePath();
         } else {
             System.out.println("Nessun file selezionato.");
             return null;
         }
-        return null;
     }
 
+    /**
+     * Copia un file selezionato nella cartella dell'utente autenticato.
+     * Ritorna il path assoluto della destinazione.
+     */
+    public String copiaBrano(String selectedFilePath) throws IOException {
+        if (selectedFilePath == null || selectedFilePath.isBlank()) {
+            throw new IllegalArgumentException("Il percorso del file sorgente non è valido.");
+        }
 
+        Path source = Paths.get(selectedFilePath);
+        if (!Files.exists(source)) {
+            throw new IOException("Il file sorgente non esiste.");
+        }
+
+        Path baseDir = Paths.get("src", "com", "dashapp", "user_files", ViewNavigator.getAuthenticatedUser());
+        if (!Files.exists(baseDir)) {
+            Files.createDirectories(baseDir);
+        }
+
+        Path destination = baseDir.resolve(source.getFileName());
+        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+
+        System.out.println("File copiato in: " + destination.toAbsolutePath());
+        return destination.toAbsolutePath().toString();
+    }
+
+    /**
+     * Permette di scaricare un brano (copia su destinazione selezionata dall'utente).
+     */
     public String scaricaBrano(Stage stage, String percorsoSorgente) {
         if (percorsoSorgente == null || percorsoSorgente.isBlank()) {
             System.out.println("Percorso del brano non valido.");
@@ -102,12 +108,13 @@ public class CaricaDao
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("File Audio", "*.mp3"),
-                new FileChooser.ExtensionFilter("File Video", "*.mp4")
+                new FileChooser.ExtensionFilter("File Video", "*.mp4"),
+                new FileChooser.ExtensionFilter("Documenti PDF", "*.pdf"),
+                new FileChooser.ExtensionFilter("Immagini JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("Immagini JPEG", "*.jpeg")
         );
 
-        // ✅ Salva, NON apri
         File destinazione = fileChooser.showSaveDialog(stage);
-
         if (destinazione != null) {
             try {
                 Path sorgente = Paths.get(percorsoSorgente);
@@ -121,9 +128,6 @@ public class CaricaDao
         } else {
             System.out.println("Salvataggio annullato dall'utente.");
         }
-
         return null;
     }
-
-
 }

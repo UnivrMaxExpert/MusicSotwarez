@@ -56,4 +56,16 @@ public class CommentoDao {
         }
         return all;
     }
+
+    public int countRepliesByCommentId(int commentId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM commento WHERE parent_id = ?";
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query)) {
+            ps.setInt(1, commentId);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
 }

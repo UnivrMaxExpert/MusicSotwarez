@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.ScrollPane?>
+
+<BorderPane styleClass="root" stylesheets="@../css/visualizza-style.css"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.dashapp.controller.WebViewController">
+
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
+         <Text styleClass="catalog-title" text="Visualizza Brano" />
+         <fx:include fx:id="nav" source="navbar.fxml" />
+      </HBox>
+   </top>
+
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="main-container">
+            <VBox alignment="TOP_CENTER" spacing="20" styleClass="main-container">
+
+            <!-- Container per il video -->
+               <StackPane alignment="CENTER">
+                  <WebView fx:id="webview" prefWidth="980" prefHeight="600" styleClass="video-wrapper" />
+               </StackPane>
+
+            <!-- Sezione inclusa -->
+               <fx:include fx:id="sectionComponent" source="/resources/fxml/sezione.fxml" />
+
+            </VBox>
+      </ScrollPane>
+   </center>
+
+</BorderPane>

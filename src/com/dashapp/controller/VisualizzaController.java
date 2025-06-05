@@ -1,18 +1,23 @@
 package com.dashapp.controller;
 
 import com.dashapp.model.*;
+import com.dashapp.util.DatabaseManager;
 import com.dashapp.view.ViewNavigator;
 import com.jfoenix.controls.JFXTextField;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -25,9 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class VisualizzaController {
 
@@ -36,9 +39,13 @@ public class VisualizzaController {
     @FXML private Button toggleButton, forwardButton, rewindButton, scaricaButton;
     @FXML private Slider progressSlider, volumeSlider;
     @FXML private Label timeLabel;
+    @FXML private Label titoloLabel;
+    @FXML private Label artistaLabel;
+    @FXML private Label genereLabel;
+    @FXML private Label annoLabel;
     @FXML private VBox commentSection, noteSection;
     @FXML private Button aggiungiNotaButton;
-    @FXML private JFXTextField newCommentField;
+    @FXML private TextField newCommentField;
     @FXML private Button pubblicaButton;
     @FXML private Button commentiButton;
     @FXML private Button noteButton;
@@ -46,6 +53,8 @@ public class VisualizzaController {
     @FXML private ScrollPane notePane;
     @FXML private VBox videoControls;
     @FXML private StackPane videoContainer;
+    @FXML private HBox buttonBar;
+    private Timeline fadeOutTimeline;
 
     private MediaPlayer mediaPlayer;
     private final BranoBean brano = ViewNavigator.getBrano();
@@ -54,32 +63,57 @@ public class VisualizzaController {
     private Integer commentoSelezionatoPerRisposta = null;
     private boolean branoTerminato = false;
 
+    private final Map<Integer, VBox> commentBoxes = new HashMap<>();
+
     @FXML
     public void initialize() {
+        audioPlaceholder.fitWidthProperty().bind(videoContainer.widthProperty());
         setupMedia();
         caricaCommenti();
         caricaNote();
         mostraCommenti();
 
-        videoControls.setVisible(false);
-        videoControls.setManaged(false);
+        // Inizializza i controlli video con opacità 0 (nascosti)
+        videoControls.setOpacity(0.0);
 
-        videoContainer.setOnMouseEntered(e -> {
-            videoControls.setVisible(true);
-            videoControls.setManaged(true);
-        });
+        // Riduci overlay scuro (opzionale)
+        videoContainer.setStyle("-fx-background-color: transparent;");
 
-        videoContainer.setOnMouseExited(e -> {
-            videoControls.setVisible(false);
-            videoControls.setManaged(false);
-        });
+        // Gestisci comparsa dei controlli
+        videoContainer.setOnMouseEntered(e -> showControls());
+        videoContainer.setOnMouseMoved(e -> showControls());
+        videoContainer.setOnMouseExited(e -> startFadeOut());
 
         commentiButton.setOnAction(e -> mostraCommenti());
         noteButton.setOnAction(e -> mostraNote());
 
         pubblicaButton.setOnAction(e -> pubblicaCommento());
         aggiungiNotaButton.setOnAction(e -> apriModalInserimentoNota());
+
+        titoloLabel.setText(brano.getTitolo());
+        artistaLabel.setText("Autori: "+brano.getAutori());
+        genereLabel.setText("Genere: "+brano.getGenere().toString());
+        annoLabel.setText("Anno: "+ brano.getAnno());//NB : anno può essere sconosciuto
     }
+
+    private void showControls() {
+        if (fadeOutTimeline != null) {
+            fadeOutTimeline.stop();
+        }
+        videoControls.setOpacity(1.0);
+    }
+
+    private void startFadeOut() {
+        if (fadeOutTimeline != null) {
+            fadeOutTimeline.stop();
+        }
+        fadeOutTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.5),
+                        new KeyValue(videoControls.opacityProperty(), 0.0))
+        );
+        fadeOutTimeline.play();
+    }
+
 
     @FXML
     private void mostraCommenti() {
@@ -113,8 +147,6 @@ public class VisualizzaController {
         }
 
         String uri = Paths.get(file).toUri().toString();
-        System.out.println("Percorso video generato: " + uri);
-
         boolean isAudio = file.toLowerCase().endsWith(".mp3") || file.toLowerCase().endsWith(".wav");
 
         mediaView.setVisible(!isAudio);
@@ -122,56 +154,49 @@ public class VisualizzaController {
         audioPlaceholder.setVisible(isAudio);
         audioPlaceholder.setManaged(isAudio);
 
-        // Imposta rapporto 16:9
         mediaView.setPreserveRatio(true);
-        mediaView.fitWidthProperty().bind(videoContainer.widthProperty());
-        mediaView.fitHeightProperty().bind(
-                mediaView.fitWidthProperty().divide(16.0/9.0)
-        );
 
-        audioPlaceholder.fitWidthProperty().bind(videoContainer.widthProperty());
-        audioPlaceholder.fitHeightProperty().bind(
-                audioPlaceholder.fitWidthProperty().divide(16.0/9.0)
-        );
+        // Bind MediaView dinamico al container
+        mediaView.fitWidthProperty().bind(videoContainer.widthProperty());
+        mediaView.fitHeightProperty().bind(videoContainer.heightProperty());
 
         if (isAudio) {
             InputStream imgStream = getClass().getResourceAsStream("/resources/images/placeholder.gif");
             if (imgStream != null) {
                 audioPlaceholder.setImage(new Image(imgStream));
-            } else {
-                System.out.println("Immagine placeholder non trovata.");
             }
         }
 
         try {
             Media media = new Media(uri);
-            media.setOnError(() -> System.out.println("Errore Media: " + media.getError().getMessage()));
-
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setOnError(() -> System.out.println("Errore MediaPlayer: " + mediaPlayer.getError().getMessage()));
             mediaView.setMediaPlayer(mediaPlayer);
 
-            mediaPlayer.setOnReady(() -> {
-                progressSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
-                mediaPlayer.setVolume(volumeSlider.getValue());
-            });
+            // Binding dinamico slider progress
+            progressSlider.maxProperty().bind(
+                    Bindings.createDoubleBinding(
+                            () -> mediaPlayer.getTotalDuration() != null ? mediaPlayer.getTotalDuration().toSeconds() : 0,
+                            mediaPlayer.totalDurationProperty()
+                    )
+            );
 
-            mediaPlayer.setOnEndOfMedia(() -> {
-                branoTerminato = true;
-                toggleButton.setText("▶");
-            });
-
-            toggleButton.setOnAction(e -> {
-                Duration currentTime = mediaPlayer.getCurrentTime();
-                Duration totalDuration = mediaPlayer.getTotalDuration();
-
-                if (currentTime.greaterThanOrEqualTo(totalDuration.subtract(Duration.seconds(0.3)))) {
-                    mediaPlayer.seek(Duration.ZERO);
-                    mediaPlayer.play();
-                    toggleButton.setText("⏸");
-                    return;
+            // Ascolta variazione tempo corrente
+            mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
+                if (!progressSlider.isValueChanging()) {
+                    progressSlider.setValue(newTime.toSeconds());
                 }
+            });
 
+            // Se slider cambia, aggiorna il video
+            progressSlider.setOnMouseReleased(e ->
+                    mediaPlayer.seek(Duration.seconds(progressSlider.getValue()))
+            );
+
+            // Volume slider binding
+            mediaPlayer.volumeProperty().bind(volumeSlider.valueProperty());
+
+            // Play/Pause button
+            toggleButton.setOnAction(e -> {
                 MediaPlayer.Status status = mediaPlayer.getStatus();
                 if (status == MediaPlayer.Status.PLAYING) {
                     mediaPlayer.pause();
@@ -182,165 +207,187 @@ public class VisualizzaController {
                 }
             });
 
-            rewindButton.setOnAction(e -> {
-                Duration cur = mediaPlayer.getCurrentTime();
-                mediaPlayer.seek(cur.subtract(Duration.seconds(5)).greaterThan(Duration.ZERO)
-                        ? cur.subtract(Duration.seconds(5)) : Duration.ZERO);
+            rewindButton.setOnAction(e ->
+                    mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.seconds(5))));
+            forwardButton.setOnAction(e ->
+                    mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(5))));
+
+            // Formatta tempo dinamico con Binding
+            timeLabel.textProperty().bind(Bindings.createStringBinding(() ->
+                            formatTime(mediaPlayer.getCurrentTime()) + " / " +
+                                    formatTime(mediaPlayer.getTotalDuration()),
+                    mediaPlayer.currentTimeProperty(),
+                    mediaPlayer.totalDurationProperty()));
+
+            mediaPlayer.setOnReady(() -> {
+                toggleButton.setText("⏸");
+                mediaPlayer.play();
             });
 
-            forwardButton.setOnAction(e -> {
-                Duration cur = mediaPlayer.getCurrentTime();
-                Duration tot = mediaPlayer.getTotalDuration();
-                mediaPlayer.seek(cur.add(Duration.seconds(5)).lessThan(tot) ? cur.add(Duration.seconds(5)) : tot);
+            mediaPlayer.setOnEndOfMedia(() -> {
+                toggleButton.setText("▶");
+                branoTerminato = true;
             });
 
-            mediaPlayer.currentTimeProperty().addListener((o, oldT, newT) -> {
-                if (!progressSlider.isValueChanging()) {
-                    progressSlider.setValue(newT.toSeconds());
-                }
-                String current = formatTime(newT);
-                String total = formatTime(mediaPlayer.getTotalDuration());
-                timeLabel.setText(current + " / " + total);
-            });
-
-            progressSlider.setOnMouseReleased(e -> mediaPlayer.seek(Duration.seconds(progressSlider.getValue())));
-            volumeSlider.valueProperty().addListener((o, oldV, newV) -> mediaPlayer.setVolume(newV.doubleValue()));
-
-        } catch (Exception ex) {
-            System.out.println("Errore durante la creazione del MediaPlayer: " + ex.getMessage());
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+
     private String formatTime(Duration d) {
-        int secs = (int) Math.floor(d.toSeconds());
-        return String.format("%02d:%02d", secs / 60, secs % 60);
+        if(d == null)
+            return "00:00";
+        else {
+            int seconds = (int) d.toSeconds();
+            return String.format("%02d:%02d", seconds / 60, seconds % 60);
+        }
     }
 
-    @FXML private void scaricaBrano() {
-        if (brano == null || brano.getFile() == null) return;
-        String risultato = new CaricaDao().scaricaBrano(
-                (Stage) scaricaButton.getScene().getWindow(), brano.getFile()
-        );
-        if (risultato != null) System.out.println("Download completato: " + risultato);
-    }
-
+    @FXML
     private void pubblicaCommento() {
         String testo = newCommentField.getText().trim();
         if (testo.isEmpty()) return;
+
         try {
-            int uid = ViewNavigator.getUtenteId();
-            commentoDao.aggiungiCommento(brano.getId(), uid, testo, commentoSelezionatoPerRisposta);
+            commentoDao.aggiungiCommento(brano.getId(), ViewNavigator.getUtenteId(), testo, commentoSelezionatoPerRisposta);
             newCommentField.clear();
             commentoSelezionatoPerRisposta = null;
             caricaCommenti();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     private void caricaCommenti() {
         commentSection.getChildren().clear();
+        commentBoxes.clear();
+
         try {
-            List<Commento> list = commentoDao.getCommentiByBranoId(brano.getId());
-            Map<Integer, VBox> mappa = new HashMap<>();
-            for (Commento c : list) {
-                VBox box = creaBoxCommento(c);
-                mappa.put(c.getId(), box);
+            List<Commento> listaCommenti = commentoDao.getCommentiByBranoId(brano.getId());
+            Map<Integer, List<Commento>> repliesMap = new HashMap<>();
+
+            for (Commento c : listaCommenti) {
+                if (c.getParentId() != null) {
+                    repliesMap.computeIfAbsent(c.getParentId(), k -> new ArrayList<>()).add(c);
+                }
+            }
+
+            for (Commento c : listaCommenti) {
                 if (c.getParentId() == null) {
-                    commentSection.getChildren().add(box);
-                } else {
-                    VBox parent = mappa.get(c.getParentId());
-                    if (parent != null) {
-                        box.setStyle("-fx-padding:5 0 5 20;");
-                        parent.getChildren().add(box);
-                    }
+                    VBox commentBox = creaBoxCommento(c, repliesMap);
+                    commentSection.getChildren().add(commentBox);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            commentSection.getChildren().add(new Label("Errore caricamento commenti"));
         }
     }
 
-    private VBox creaBoxCommento(Commento c) {
-        VBox commentBox = new VBox(5);
+    private VBox creaBoxCommento(Commento commento, Map<Integer, List<Commento>> repliesMap) {
+        VBox commentBox = new VBox();
         commentBox.getStyleClass().add("comment-box");
+        commentBox.setPadding(new Insets(8));
+        commentBox.setSpacing(5);
+        commentBox.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: 12; -fx-border-color: #cccccc; -fx-border-width: 1;");
 
-        Label autoreLabel = new Label(c.getAutore());
+        // Nome autore
+        Label autoreLabel = new Label(commento.getAutore());
         autoreLabel.getStyleClass().add("comment-author");
 
-        Label testoLabel = new Label(c.getTesto());
+        // Testo commento
+        Label testoLabel = new Label(commento.getTesto());
+        testoLabel.getStyleClass().add("comment-text");
         testoLabel.setWrapText(true);
 
-        Label dataLabel = new Label(c.getData().toString());
-        dataLabel.getStyleClass().add("comment-date");
+        // Container per le risposte
+        VBox repliesContainer = new VBox();
+        repliesContainer.setSpacing(5);
+        repliesContainer.setPadding(new Insets(5, 0, 0, 20));
 
-        Button rispondiButton = new Button("Rispondi");
-        rispondiButton.getStyleClass().add("reply-button");
+        List<Commento> replies = repliesMap.get(commento.getId());
 
-        VBox replyContainer = new VBox(5);
-        replyContainer.setVisible(false);
-        replyContainer.setManaged(false);
+        // Bottone toggle risposte (inizialmente nullo)
+        Button toggleRepliesButton;
 
-        if (c.getAutoreId() == ViewNavigator.getUtenteId()) {
-            rispondiButton.setDisable(true);
-            rispondiButton.setText("Non puoi rispondere a te stesso");
-            rispondiButton.setStyle("-fx-opacity: 0.6; -fx-cursor: default;");
-        } else {
-            rispondiButton.setOnAction(e -> {
-                boolean isVisible = replyContainer.isVisible();
-                replyContainer.setVisible(!isVisible);
-                replyContainer.setManaged(!isVisible);
+        if (replies != null && !replies.isEmpty()) {
+            toggleRepliesButton = new Button("+" + replies.size() + " Risposte");
+            toggleRepliesButton.getStyleClass().add("toggle-replies-btn");
+
+            toggleRepliesButton.setOnAction(e -> {
+                boolean isVisible = repliesContainer.isVisible();
+                repliesContainer.setVisible(!isVisible);
+                repliesContainer.setManaged(!isVisible);
+                toggleRepliesButton.setText(isVisible ? ("+" + replies.size() + " Risposte") : "- Riduci Risposte");
             });
+
+            for (Commento reply : replies) {
+                VBox replyBox = creaBoxCommento(reply, repliesMap);
+                repliesContainer.getChildren().add(replyBox);
+            }
+
+            repliesContainer.setVisible(false);
+            repliesContainer.setManaged(false);
+        } else {
+            toggleRepliesButton = null;
         }
 
-        JFXTextField rispostaField = new JFXTextField();
-        rispostaField.setPromptText("Rispondi a " + c.getAutore());
-        rispostaField.getStyleClass().add("comm-field");
+        // Ora aggiungiamo gli elementi nell’ordine giusto
+        commentBox.getChildren().addAll(
+                autoreLabel,
+                testoLabel
+        );
 
-        Button pubblicaRisposta = new Button("Pubblica");
-        Button annullaRisposta = new Button("Annulla");
+        if (toggleRepliesButton != null) {
+            commentBox.getChildren().add(toggleRepliesButton);
+        }
 
-        pubblicaRisposta.setOnAction(e -> {
-            String testoRisposta = rispostaField.getText().trim();
-            if (!testoRisposta.isEmpty()) {
-                try {
-                    int uid = ViewNavigator.getUtenteId();
-                    commentoDao.aggiungiCommento(brano.getId(), uid, testoRisposta, c.getId());
-                    caricaCommenti();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
+        commentBox.getChildren().add(repliesContainer);
 
-        annullaRisposta.setOnAction(e -> {
-            rispostaField.clear();
-            replyContainer.setVisible(false);
-            replyContainer.setManaged(false);
-        });
+        commentBoxes.put(commento.getId(), commentBox);
 
-        replyContainer.getChildren().addAll(rispostaField, new HBox(10, pubblicaRisposta, annullaRisposta));
-        commentBox.getChildren().addAll(autoreLabel, testoLabel, dataLabel, rispondiButton, replyContainer);
         return commentBox;
     }
+
 
     private void caricaNote() {
         noteSection.getChildren().clear();
         List<NotaBean> note = notaDao.getNotePerBrano(brano.getId());
+
         for (NotaBean n : note) {
-            VBox card = new VBox(6);
-            card.getStyleClass().add("comment-box");
-            card.getChildren().addAll(
-                    new Label("Segmento: " + n.getSegmentoInizio() + " - " + n.getSegmentoFine()) {{
-                        getStyleClass().add("comment-author");
-                    }},
-                    new Label(n.getTestoLibero()) {{
-                        setWrapText(true);
-                        getStyleClass().add("comment-text");
-                    }}
-            );
+            VBox card = new VBox(8);  // Spazio verticale maggiore
+            card.getStyleClass().add("note-card");
+            card.setPadding(new Insets(10));
+            card.setMaxWidth(400);
+            card.setMinWidth(300);
+
+            // Titolo con segmento
+            Label segmentLabel = new Label("Segmento: " + n.getSegmentoInizio() + " - " + n.getSegmentoFine());
+            segmentLabel.getStyleClass().add("note-segment");
+
+            // Testo libero
+            Label testoLabel = new Label(n.getTestoLibero());
+            testoLabel.getStyleClass().add("note-text");
+
+            // Data e luogo
+            Label infoLabel = new Label("Registrata il: " + n.getDataRegistrazione() +
+                    " presso " + n.getLuogoRegistrazione());
+            infoLabel.getStyleClass().add("note-info");
+
+            // Strumenti
+            Label strumentiLabel = new Label("Strumenti: " +
+                    String.join(", ", n.getStrumenti()));
+            strumentiLabel.getStyleClass().add("note-extra");
+            //n.getStrumenti().forEach(System.out::println);
+            //n.getEsecutori().forEach(System.out::println);
+            // Esecutori
+            Label esecutoriLabel = new Label("Esecutori: " +
+                    String.join(", ", n.getEsecutori()));
+            esecutoriLabel.getStyleClass().add("note-extra");
+
+            // Aggiungi tutto alla card
+            card.getChildren().addAll(segmentLabel, testoLabel, infoLabel, strumentiLabel, esecutoriLabel);
+
             noteSection.getChildren().add(card);
         }
     }
@@ -349,8 +396,8 @@ public class VisualizzaController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/nota.fxml"));
             Parent root = loader.load();
-            NotaController ctrl = loader.getController();
-            ctrl.setBrano(brano);
+            NotaController controller = loader.getController();
+            controller.setBrano(brano);
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

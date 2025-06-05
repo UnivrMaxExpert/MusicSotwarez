@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.media.*?>
+
+<StackPane fx:id="videoContainer" prefHeight="450" prefWidth="800" stylesheets="@../css/prova-style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.ProvaController">
+
+    <VBox fx:id="videoControls" alignment="BOTTOM_CENTER" managed="false" mouseTransparent="false" spacing="8" styleClass="video-controls-overlay" visible="false" StackPane.alignment="BOTTOM_CENTER">
+       <MediaView fx:id="mediaView" fitHeight="${videoContainer.height}" fitWidth="${videoContainer.width}" preserveRatio="true" /> <Slider fx:id="progressSlider" prefWidth="780" /> <HBox alignment="TOP_CENTER" spacing="10">
+        <Button fx:id="playPauseButton" text="▶" />
+        <Button fx:id="rewindButton" text="⏪" />
+        <Button fx:id="forwardButton" text="⏩" />
+        <Label fx:id="timeLabel" text="00:00 / 00:00" />
+        <Slider fx:id="volumeSlider" max="1" min="0" value="0.5" />
+    </HBox>
+        <padding>
+            <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+    </VBox>
+
+</StackPane>

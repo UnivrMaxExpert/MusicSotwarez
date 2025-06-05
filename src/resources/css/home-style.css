@@ -1,0 +1,111 @@
+/* -------------------------------
+   home-style.css - Stili per home.fxml
+----------------------------------- */
+
+/* SFONDO CON GRADIENTE EFFETTO FROSTED GLASS */
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #FFE53B, #FF2525);
+}
+
+/* CONTENITORE PRINCIPALE CON EFFETTO FROSTED GLASS */
+.stack-pane {
+    -fx-background-color: #ffffff1a; /* Bianco con 10% di opacità */
+    -fx-background-radius: 20;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, #00000066, 15, 0.3, 0, 4);
+    -fx-border-color: #ffffff33; /* Bianco con 20% di opacità */
+    -fx-border-radius: 20;
+}
+
+/* TITOLO CENTRALE CON EFFETTI */
+#titolo {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #000000, 2, 0.5, 0, 1);
+    -fx-text-alignment: center;
+}
+
+/* PULSANTI INTERATTIVI */
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-padding: 6 12;
+    -fx-background-radius: 20;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #0000004d, 5, 0.3, 0, 2);
+}
+
+/* EFFETTO HOVER PER I PULSANTI */
+.button:hover {
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, #ffffff33, 8, 0.4, 0, 3);
+}
+
+/* EFFETTO FOCUS PER I PULSANTI */
+.button:focused {
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2;
+    -fx-border-radius: 20;
+}
+
+/* HBOX DEI PULSANTI */
+.hbox {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+/* VBOX PRINCIPALE */
+.frosted-layer {
+    -fx-background-color: rgba(30, 30, 30, 0.6); /* Più trasparente e neutro */
+    -fx-background-radius: 16;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.25, 0, 6);
+    -fx-border-color: rgba(255, 255, 255, 0.15); /* Filo di contorno sottile */
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-insets: 0;
+}
+
+.custom-scroll-pane {
+    -fx-background: transparent;
+    -fx-background-color: rgba(0, 0, 0, 0.4); /* effetto frosted glass */
+    -fx-background-radius: 15;
+    -fx-border-color: #ffffff33; /* leggero bordo bianco trasparente */
+    -fx-border-radius: 15;
+    -fx-padding: 10;
+}
+
+/* Contenuto del ScrollPane */
+.custom-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Barra di scorrimento verticale */
+.custom-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}
+
+/* Thumb (la maniglia di scorrimento) verticale */
+.custom-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #ffffff55; /* semitrasparente bianco */
+    -fx-background-radius: 5;
+}
+
+/* Barra di scorrimento orizzontale (puoi rimuoverlo se non serve) */
+.custom-scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}
+
+.custom-scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: #ffffff55;
+    -fx-background-radius: 5;
+}

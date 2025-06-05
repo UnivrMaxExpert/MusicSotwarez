@@ -3,6 +3,7 @@ package com.dashapp.controller;
 import com.dashapp.model.BranoBean;
 import com.dashapp.model.CaricaDao;
 import com.dashapp.model.Genere;
+import com.dashapp.view.ViewNavigator;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,14 +16,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import com.jfoenix.controls.JFXTextField;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CaricaController implements Initializable {
@@ -87,7 +91,7 @@ public class CaricaController implements Initializable {
     @FXML
     public void openFileChooser() {
         Stage stage = (Stage) btn.getScene().getWindow();
-        path = caricaDao.openfilechooser(stage);
+        path = caricaDao.openFileChooser(stage);
 
         if (path != null) {
             fileLabel.setText(new File(path).getName());
@@ -99,25 +103,24 @@ public class CaricaController implements Initializable {
     }
 
     @FXML
-    private void handleInvia() {
+    private void handleInvia() throws IOException {
         statusLabel.setVisible(false);
         String titoloText = titolo.getText().trim();
         String linkText = youtubeLink.getText().trim();
         Genere selectedGenere = menugenre.getValue();
+        if(path!=null)
+            caricaDao.copiaBrano(path);
 
-        // Validazioni di base
         if (titoloText.isEmpty() || selectedGenere == null || (path == null && linkText.isEmpty())) {
             showStatus("Compila tutti i campi obbligatori.", "red");
             return;
         }
 
-        // Controllo: se sono stati inseriti sia un file che un link, errore
         if (path != null && !linkText.isEmpty()) {
             showStatus("Inserisci solo un file o un link YouTube, non entrambi.", "red");
             return;
         }
 
-        // Controllo: se è stato inserito un link, validalo
         if (!linkText.isEmpty()) {
             if (!isYouTubeLink(linkText)) {
                 showStatus("Il link inserito non è un link di YouTube.", "red");
@@ -129,7 +132,6 @@ public class CaricaController implements Initializable {
             }
         }
 
-        // Raccogli autori
         List<String> autori = new ArrayList<>();
         for (Node node : vboxContainer.getChildren()) {
             if (node instanceof HBox hbox) {
@@ -149,33 +151,79 @@ public class CaricaController implements Initializable {
             return;
         }
 
-        // Crea BranoBean
         BranoBean brano;
         if (anno.getValue() == null) {
             brano = new BranoBean(
                     titoloText,
                     selectedGenere,
-                    path,
+                    (path != null) ? path : linkText,
                     autori.toArray(new String[0])
             );
         } else {
             brano = new BranoBean(
                     titoloText,
                     selectedGenere,
-                    path,
+                    (path != null) ? path : linkText,
                     anno.getValue(),
                     autori.toArray(new String[0])
             );
         }
 
+        boolean successo = caricaDao.caricaBrano(brano);
 
-        try {
-            caricaDao.caricaBrano(brano);
-            showStatus("Brano caricato con successo!", "green");
-        } catch (Exception e) {
-            showStatus("Errore durante il caricamento.", "red");
+        if (successo) {
+            showSuccessDialog();
+        } else {
+            showErrorAlert();
         }
     }
+
+    private void showSuccessDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Caricamento completato");
+
+        // Recupera la finestra principale (opzionale)
+        Window owner = dialog.getDialogPane().getScene() != null ?
+                dialog.getDialogPane().getScene().getWindow() :
+                null;
+
+        // Carica il CSS personalizzato
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/resources/css/carica-style.css").toExternalForm()
+        );
+        dialog.getDialogPane().getStyleClass().add("custom-dialog");
+
+        // Messaggio
+        Label label = new Label("Il brano è stato caricato correttamente!");
+        label.getStyleClass().add("label");
+
+        // Bottoni
+        ButtonType homeButton = new ButtonType("Torna alla Home", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(homeButton, ButtonType.CANCEL);
+
+        // Imposta contenuto
+        dialog.getDialogPane().setContent(label);
+
+        // Mostra la finestra
+        Optional<ButtonType> result = dialog.showAndWait();
+        result.ifPresent(response -> {
+            if (response == homeButton) {
+                ViewNavigator.navigateToHome();
+            }
+        });
+    }
+
+    /**
+     * Mostra un alert di errore.
+     */
+    private void showErrorAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Errore di caricamento");
+        alert.setHeaderText("Si è verificato un errore durante il caricamento del brano.");
+        alert.setContentText("Controlla il file selezionato e riprova.");
+        alert.showAndWait();
+    }
+
 
     private boolean isYouTubeLink(String link) {
         return link.matches("^(https?://)?(www\\.)?(youtube\\.com|youtu\\.be)/.*$");

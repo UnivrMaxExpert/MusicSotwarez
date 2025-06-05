@@ -22,6 +22,7 @@ public class ViewNavigator {
     private static Stage mainstage;
     private static BranoBean brano;
     private static int id;
+    private static String link;
     // Current authenticated username
     private static String authenticatedUser = null;
     public static BranoBean getBrano(){return brano;}
@@ -104,6 +105,28 @@ public class ViewNavigator {
         } else {
             navigateToLogin();
         }
+    }
+
+    public static void navigateToWebView() {
+        if (isAuthenticated())
+        {
+            mainController.setState(5);
+            loadView("webview.fxml");
+        }
+        else
+            navigateToLogin();
+    }
+
+    public static String getLink() {
+        return link;
+    }
+
+    public static void setLink(String link) {
+        ViewNavigator.link = link;
+    }
+
+    public static void navigateToExit() {
+        loadView("prova.fxml");
     }
 
     /**

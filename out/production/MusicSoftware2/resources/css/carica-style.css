@@ -1,23 +1,12 @@
-/* -------------------------------
-   carica.css - Stili per carica.fxml
------------------------------------ */
-
-/* Frosted Glass Effect per la finestra principale */
+	/* Frosted Glass Effect per la finestra principale */
 .border-pane {
-	-fx-background-color: rgba(255, 255, 255, 0.1); /* semi-trasparente */
+	-fx-background-color: rgba(255, 255, 255, 0.1);
 	-fx-background-insets: 0;
 	-fx-background-radius: 15;
 	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0.3, 0, 4);
-	-fx-backdrop-filter: blur(20px); /* richiede JavaFX 19+ oppure Gluon FX */
 	-fx-padding: 20;
 	-fx-border-color: rgba(255,255,255,0.2);
 	-fx-border-radius: 15;
-}
-
-/* TESTO */
-.text, .label {
-	-fx-font-size: 16px;
-	-fx-fill: white;
 }
 
 /* LABEL per messaggi di errore/successo */
@@ -26,32 +15,45 @@
 	-fx-font-weight: bold;
 }
 
+.header-text {
+	-fx-font-size: 24px;
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-effect: dropshadow(gaussian, black, 2, 0.5, 0, 1);
+	-fx-padding: 10 0;
+	-fx-alignment: center;
+}
+
+/* BUTTON BASE */
 /* BUTTON BASE */
 .button {
-	-fx-background-color: linear-gradient(to right, #6a11cb, #2575fc);
+	-fx-background-color: transparent;
 	-fx-text-fill: white;
 	-fx-font-size: 16px;
 	-fx-padding: 8 16;
 	-fx-background-radius: 25;
 	-fx-cursor: hand;
+	-fx-border-color: transparent;
+	-fx-border-width: 2;
+	-fx-border-radius: 25;
 	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.3, 0, 2);
 	-jfx-rippler-fill: white;
+	-fx-transition: all 0.3s ease;
 }
 
 /* BUTTON HOVER */
 .button:hover {
-	-fx-background-color: linear-gradient(to right, #2575fc, #6a11cb);
+	-fx-border-color: white;
 	-fx-scale-x: 1.05;
 	-fx-scale-y: 1.05;
-	-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.2), 8, 0.4, 0, 3);
 }
 
 /* BUTTON FOCUSED */
 .button:focused {
 	-fx-border-color: white;
 	-fx-border-width: 2;
-	-fx-border-radius: 25;
 }
+
 
 /* TEXTFIELD BASE */
 .text-field, .jfx-text-field {
@@ -123,6 +125,36 @@
 .text {
 	-fx-font-size: 20px;
 	-fx-font-weight: bold;
-	-fx-fill: white;
+	-fx-text-fill: white;
 	-fx-effect: dropshadow(gaussian, black, 2, 0.5, 0, 1);
 }
+
+.custom-dialog {
+	-fx-background-color: rgba(255, 255, 255, 0.1);
+	-fx-background-radius: 15;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0.3, 0, 4);
+	-fx-padding: 20;
+	-fx-border-color: rgba(255,255,255,0.2);
+	-fx-border-radius: 15;
+	-fx-font-size: 16px;
+	-fx-text-fill: white;
+}
+
+.navbar {
+	-fx-background-color: transparent;
+	-fx-padding: 10 20;
+	-fx-spacing: 20;
+}
+
+.nav-button {
+	-fx-text-fill: white;
+	-fx-font-size: 16px;
+	-fx-font-weight: bold;
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-cursor: hand;
+}
+
+.nav-button:hover {
+	-fx-text-fill: #64b5f6;
+} 

@@ -29,7 +29,8 @@ public class NotaDao {
                 // Recupera strumenti ed esecutori collegati
                 nota.setStrumenti(getStrumentiPerNota(nota.getId(), conn));
                 nota.setEsecutori(getEsecutoriPerNota(nota.getId(), conn));
-
+                nota.getStrumenti().forEach(System.out::println);
+                nota.getEsecutori().forEach(System.out::println);
                 note.add(nota);
             }
         } catch (SQLException e) {

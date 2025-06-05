@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import org.controlsfx.control.CheckComboBox?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import com.jfoenix.controls.JFXTextArea?>
-<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
-
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckComboBox?>
+
 <StackPane stylesheets="@../css/nota-style.css" xmlns="http://javafx.com/javafx/23.0.1"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.NotaController">
     <VBox styleClass="frosted-layer" spacing="10.0">
@@ -21,32 +21,32 @@
         <Label styleClass="title-label" text="Nuova Nota" />
 
         <Label text="Strumenti musicali" />
-        <CheckComboBox fx:id="strumentiComboBox" />
+        <CheckComboBox fx:id="strumentiComboBox" styleClass="check-combo-box"/>
 
         <Label text="Esecutori" />
-        <CheckComboBox fx:id="esecutoriComboBox" />
+        <CheckComboBox fx:id="esecutoriComboBox" styleClass="check-combo-box"/>
 
         <Label text="Durata" />
-        <JFXTextField fx:id="durataField" promptText="Durata del brano" />
+        <TextField fx:id="durataField" promptText="Durata del brano" styleClass="jfx-text-field"/>
 
         <Label text="Luogo" />
-        <JFXTextField fx:id="luogoField" promptText="Inserisci il luogo" />
+        <TextField fx:id="luogoField" promptText="Inserisci il luogo" styleClass="jfx-text-field"/>
 
         <Label text="Data" />
-        <DatePicker fx:id="dataPicker" promptText="dd-mm-aaaa" />
+        <DatePicker fx:id="dataPicker" promptText="dd-mm-aaaa" styleClass="date-picker"/>
 
         <Label text="Segmento Inizio" />
-        <JFXTextField fx:id="segmentoInizioField" promptText="hh:mm:ss" />
+        <TextField fx:id="segmentoInizioField" promptText="hh:mm:ss" styleClass="jfx-text-field"/>
 
         <Label text="Segmento Fine" />
-        <JFXTextField fx:id="segmentoFineField" promptText="hh:mm:ss" />
+        <TextField fx:id="segmentoFineField" promptText="hh:mm:ss" styleClass="jfx-text-field"/>
 
         <Label text="Aggiunta dettagli" />
-        <JFXTextArea fx:id="testoLiberoArea" promptText="Note / Dettagli" minHeight="100" />
+        <TextArea fx:id="testoLiberoArea" promptText="Note / Dettagli" minHeight="100" styleClass="jfx-text-area"/>
 
         <HBox spacing="10">
-            <JFXButton fx:id="salvaNotaBtn" onAction="#salvaNota" text="Salva" />
-            <JFXButton fx:id="chiudiBtn" onAction="#chiudi" text="Annulla" />
+            <Button fx:id="salvaNotaBtn" onAction="#salvaNota" text="Salva" styleClass="jfx-button"/>
+            <Button fx:id="chiudiBtn" onAction="#chiudi" text="Annulla" styleClass="jfx-button"/>
         </HBox>
 
     </VBox>

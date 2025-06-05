@@ -1,6 +1,7 @@
 package com.dashapp.model;
 
 import com.dashapp.util.DatabaseManager;
+import com.dashapp.view.ViewNavigator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,6 +36,7 @@ public class CatalogoDao
                 String[] autori = autoriStr.split(",");
 
                 BranoBean brano = new BranoBean(titolo, genere, file, anno, autori);
+
                 brano.setId(res.getInt("id"));
                 brani.add(brano);
             }

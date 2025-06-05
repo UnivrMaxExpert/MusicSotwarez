@@ -7,8 +7,8 @@
 /* ===== Frosted Layer con trasparenza ===== */
 .frosted-layer {
     -fx-background-color:
-            rgba(0, 0, 0, 0.5), /* layer di opacizzazione sopra */
-            rgba(255, 255, 255, 0.08); /* vetro semitrasparente sotto */;
+            rgba(0, 0, 0, 0.5),
+            rgba(255, 255, 255, 0.08);
     -fx-background-insets: 0, 0;
     -fx-background-radius: 20;
     -fx-padding: 30;
@@ -32,46 +32,72 @@
     -fx-text-fill: white;
 }
 
-/* ===== Campi JFXTextField ===== */
+/* ===== TextField ===== */
 .jfx-text-field {
     -fx-text-fill: white;
     -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
     -fx-background-color: transparent;
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 0 0 1 0;
-    -jfx-focus-color: #7A5FFF;
     -fx-faint-focus-color: transparent;
 }
 
-/* ===== JFXTextArea ===== */
-.jfx-text-area {
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
-    -fx-background-color: transparent;
-    -fx-border-color: rgba(255, 255, 255, 0.3);
-    -fx-border-width: 0 0 1 0;
-    -jfx-focus-color: #7A5FFF;
-    -fx-faint-focus-color: transparent;
-}
-
-/* ===== DatePicker ===== */
-.date-picker {
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
-    -fx-background-color: transparent;
-    -fx-border-color: rgba(255, 255, 255, 0.3);
-    -fx-border-width: 0 0 1 0;
-    -fx-faint-focus-color: transparent;
-}
-
-/* ===== CheckComboBox (ControlsFX) ===== */
+/* ===== TextArea ===== */
+/* Stile CheckComboBox */
 .check-combo-box {
-    -fx-background-color: rgba(50, 50, 50, 0.5);
-    -fx-background-radius: 6;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 8;
     -fx-border-color: rgba(255, 255, 255, 0.3);
-    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 8;
     -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-padding: 6 12;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+}
+
+/* Selezione (quando aperto) */
+.check-combo-box .list-cell:selected {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* TextArea */
+.jfx-text-area {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-font-size: 14px;
+    -fx-padding: 8;
+}
+
+/* DatePicker */
+.date-picker {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 6 12;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+}
+
+/* Pulsanti */
+.jfx-button {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 6 16;
+}
+
+.jfx-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* ===== Pulsanti ===== */
@@ -98,4 +124,12 @@
 .date-picker:focused,
 .check-combo-box:focused {
     -fx-effect: dropshadow(gaussian, #7A5FFF, 6, 0.4, 0, 0);
+}
+
+/* ===== Optional: highlight border on focus ===== */
+.jfx-text-field:focused,
+.jfx-text-area:focused,
+.date-picker:focused {
+    -fx-border-color: #7A5FFF;
+    -fx-border-width: 0 0 2 0;
 }

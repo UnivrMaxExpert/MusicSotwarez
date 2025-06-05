@@ -64,4 +64,14 @@ public class BranoBean implements Serializable
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "id=" + id +
+                ", titolo='" + titolo + '\'' +
+                ", autori=" + autori +
+                ", genere=" + genere +
+                ", file='" + file + '\'' +
+                ", anno=" + anno;
+    }
 }

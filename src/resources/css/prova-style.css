@@ -1,0 +1,63 @@
+/* In videoplayer-styles.css */
+
+/* Stile per la VBox dei controlli in sovraimpressione */
+.video-controls-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.7); /* Sfondo semi-trasparente */
+    -fx-padding: 10px;
+    -fx-background-radius: 5px; /* Bordi arrotondati */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 0); /* Ombra leggera */
+}
+
+/* Stile per i pulsanti del player */
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 1.2em;
+    -fx-cursor: hand;
+    -fx-padding: 5px 8px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 3px;
+}
+
+/* Stile per lo slider di progresso */
+.slider {
+    -fx-control-inner-background: rgba(255, 255, 255, 0.3); /* Colore della traccia */
+    -fx-padding: 0;
+}
+
+.slider .track {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-radius: 2;
+    -fx-pref-height: 4px;
+}
+
+.slider .thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 50%; /* Cerchio */
+    -fx-pref-width: 12px;
+    -fx-pref-height: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0.0, 0, 1);
+}
+
+.slider .thumb:hover {
+    -fx-background-color: #90caf9; /* Colore al hover */
+}
+
+/* Stile per la label del tempo */
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 0.9em;
+}
+
+/* Stile per il volume slider (puoi riusare lo stile generico del slider o crearne uno specifico) */
+.volume-slider .track {
+    -fx-background-color: white;
+}
+.volume-slider .thumb {
+    -fx-background-color: white;
+}
