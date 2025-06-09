@@ -109,3 +109,39 @@
     -fx-background-color: #ffffff55;
     -fx-background-radius: 5;
 }
+
+.brano-card {
+    -fx-background-color: rgba(30, 30, 30, 0.6); /* Stesso sfondo della frosted-layer */
+    -fx-background-radius: 16;
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.2), 10, 0.5, 0, 0);
+    -fx-padding: 15;
+    -fx-transition: all 0.3s ease;
+}
+
+.brano-card:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.4), 15, 0.5, 0, 0);
+    -fx-cursor: hand;
+}
+
+.brano-title {
+    -fx-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.brano-meta {
+    -fx-fill: white;
+    -fx-font-size: 12px;
+    -fx-opacity: 0.8;
+}
+
+.frosted-layer {
+    -fx-padding: 30;
+    -fx-max-width: 600px; /* Si applica solo se usi anche dal CSS */
+    -fx-alignment: center;
+}

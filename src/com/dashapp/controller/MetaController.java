@@ -1,6 +1,7 @@
 package com.dashapp.controller;
 
 import com.dashapp.model.BranoBean;
+import com.dashapp.model.MetaBean;
 import com.dashapp.model.NotaBean;
 import com.dashapp.model.NotaDao;
 import com.dashapp.view.ViewNavigator;
@@ -23,12 +24,10 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
-public class NotaController implements Initializable {
-    @FXML private TextField durataField;
-    @FXML private TextField luogoField;
+public class MetaController implements Initializable {
     @FXML private DatePicker dataPicker;
-    @FXML private TextField segmentoInizioField;
-    @FXML private TextField segmentoFineField;
+    @FXML private TextField InizioField;
+    @FXML private TextField FineField;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     @FXML private TextArea testoLiberoArea;
     private NotaDao notadao = new NotaDao();
@@ -41,14 +40,13 @@ public class NotaController implements Initializable {
     private ObservableList<String> strumentiList;
     private ObservableList<String> esecutoriList;
 
-
     public void setBrano(BranoBean brano) {
         this.brano = brano;
     }
 
     @FXML
-    private void salvaNota() {
-        NotaBean nota = new NotaBean();
+    private void salvaMeta() {
+        MetaBean meta = new MetaBean();
 
         List<String> strumentiSelezionati = new ArrayList<>(strumentiComboBox.getCheckModel().getCheckedItems());
         strumentiSelezionati.remove("Aggiungi nuovo...");
@@ -56,35 +54,31 @@ public class NotaController implements Initializable {
         esecutoriSelezionati.remove("Aggiungi nuovo...");
 
         try {
-            LocalTime inizio = LocalTime.parse(segmentoInizioField.getText(), formatter);
-            LocalTime fine = LocalTime.parse(segmentoFineField.getText(), formatter);
-            LocalTime durata = LocalTime.parse(durataField.getText(), formatter);
+            LocalTime inizio = LocalTime.parse(InizioField.getText(), formatter);
+            LocalTime fine = LocalTime.parse(FineField.getText(), formatter);
 
             Time timeInizio = Time.valueOf(inizio);
             Time timeFine = Time.valueOf(fine);
-            Time timeDurata = Time.valueOf(durata);
 
-            nota.setIdBrano(brano.getId());
-            nota.setIdUtente(ViewNavigator.getUtenteId());
-            nota.setDurata(timeDurata);
-            nota.setLuogoRegistrazione(luogoField.getText());
-            nota.setDataRegistrazione(Date.valueOf(dataPicker.getValue()));
-            nota.setSegmentoFine(timeFine);
-            nota.setSegmentoInizio(timeInizio);
-            nota.setTestoLibero(testoLiberoArea.getText());
+            meta.setIdBrano(brano.getId());
+            meta.setIdUtente(ViewNavigator.getUtenteId());
+            meta.setDataRegistrazione(Date.valueOf(dataPicker.getValue()));
+            meta.setSegmentoFine(timeFine);
+            meta.setSegmentoInizio(timeInizio);
+            meta.setCommento(testoLiberoArea.getText());
 
-            int notaId = notaDao.inserisciNota(nota);
-            notaDao.inserisciStrumenti(true, false,notaId, mapStrumenti.entrySet()
+            int notaId = notaDao.inserisciMeta(meta);
+            notaDao.inserisciStrumenti(true, true, notaId, mapStrumenti.entrySet()
                     .stream()
                     .filter(entry -> strumentiSelezionati.contains(entry.getValue()))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList()));
-            notaDao.inserisciStrumenti(false, false,notaId, mapEsecutori.entrySet()
+            notaDao.inserisciStrumenti(false, true, notaId, mapEsecutori.entrySet()
                     .stream()
                     .filter(entry -> esecutoriSelezionati.contains(entry.getValue()))
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList()));
-            ((Stage) durataField.getScene().getWindow()).close();
+            ((Stage) InizioField.getScene().getWindow()).close();
         } catch (DateTimeParseException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Formato orario non valido. Usa hh:mm:ss");
             alert.showAndWait();
@@ -103,8 +97,7 @@ public class NotaController implements Initializable {
                 strumentiList.add(strumentiList.size() - 1, nome); // prima di "Aggiungi nuovo..."
                 strumentiComboBox.getItems().setAll(strumentiList);
                 strumentiComboBox.getCheckModel().check(nome);
-                if(!notaDao.addOthers(true, nome))
-                {
+                if (!notaDao.addOthers(true, nome)) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Errore nel database: inserimento dello strumento fallito");
                     alert.showAndWait();
                 }
@@ -124,8 +117,7 @@ public class NotaController implements Initializable {
                 esecutoriList.add(esecutoriList.size() - 1, nome); // prima di "Aggiungi nuovo..."
                 esecutoriComboBox.getItems().setAll(esecutoriList);
                 esecutoriComboBox.getCheckModel().check(nome);
-                if(!notaDao.addOthers(false, nome))
-                {
+                if (!notaDao.addOthers(false, nome)) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Errore nel database: inserimento dello esecutore fallito");
                     alert.showAndWait();
                 }
@@ -135,9 +127,8 @@ public class NotaController implements Initializable {
 
     @FXML
     private void chiudi() {
-        ((Stage) durataField.getScene().getWindow()).close();
+        ((Stage) InizioField.getScene().getWindow()).close();
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -149,7 +140,7 @@ public class NotaController implements Initializable {
         esecutoriSelezionati.add("Aggiungi nuovo...");
         strumentiList = FXCollections.observableArrayList(strumentiSelezionati);
         esecutoriList = FXCollections.observableArrayList(esecutoriSelezionati);
-        //Al posto di un array statico mettere col NotaDao, un query al db sulla tabella degli strumenti
+
         strumentiComboBox.getItems().setAll(strumentiList);
         strumentiComboBox.getCheckModel().getCheckedItems().addListener((ListChangeListener<String>) c -> {
             if (strumentiComboBox.getCheckModel().isChecked("Aggiungi nuovo...")) {
@@ -165,9 +156,8 @@ public class NotaController implements Initializable {
             }
         });
 
-        setTimeFormatter(segmentoInizioField);
-        setTimeFormatter(segmentoFineField);
-        setTimeFormatter(durataField);
+        setTimeFormatter(InizioField);
+        setTimeFormatter(FineField);
     }
 
     private void setTimeFormatter(TextField field) {
@@ -178,5 +168,4 @@ public class NotaController implements Initializable {
 
         field.setTextFormatter(new TextFormatter<>(filter));
     }
-
 }

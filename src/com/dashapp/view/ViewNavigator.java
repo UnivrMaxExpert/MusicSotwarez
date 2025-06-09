@@ -5,7 +5,8 @@ import com.dashapp.controller.MainController;
 import com.dashapp.model.BranoBean;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.web.WebEngine;
 import javafx.stage.Stage;
 
 
@@ -23,6 +24,8 @@ public class ViewNavigator {
     private static BranoBean brano;
     private static int id;
     private static String link;
+    private static MediaPlayer mediaPlayer;
+    private static WebEngine webEngine;
     // Current authenticated username
     private static String authenticatedUser = null;
     public static BranoBean getBrano(){return brano;}
@@ -43,6 +46,13 @@ public class ViewNavigator {
     public static void changeTitle(String title) {mainstage.setTitle(title);}
     public static int getState(){return mainController.getState();}
     private static void loadView(String fxml) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+            mediaPlayer = null;
+        }
+        if (webEngine != null)
+            webEngine.load(null);
         try {
             URL fxmlUrl = Main.class.getResource("/resources/fxml/" + fxml);
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
@@ -51,6 +61,23 @@ public class ViewNavigator {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error loading view: " + fxml);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getRisorsa(Class<T> type) {
+        Object risorsa = mediaPlayer == null ? webEngine : mediaPlayer;
+        if (type.isInstance(risorsa)) {
+            return type.cast(risorsa);
+        }
+        throw new IllegalStateException("La risorsa non è del tipo richiesto: " + type.getSimpleName());
+    }
+
+    public static <T> void setRisorsa(T risorsa) {
+        if (risorsa instanceof MediaPlayer) {
+            mediaPlayer = (MediaPlayer) risorsa;
+        } else if (risorsa instanceof WebEngine) {
+            webEngine = (WebEngine) risorsa;
         }
     }
 

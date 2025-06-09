@@ -21,13 +21,13 @@ import java.util.*;
 public class SectionController implements Initializable {
 
     @FXML private VBox root;
-    @FXML private VBox commentSection, noteSection;
-    @FXML private Button aggiungiNotaButton;
+    @FXML private VBox commentSection, noteSection, metaSection;
+    @FXML private Button aggiungiNotaButton, metaButton, aggiungiMetaButton;
     @FXML private TextField newCommentField;
     @FXML private Button pubblicaButton;
     @FXML private Button commentiButton;
     @FXML private Button noteButton;
-    @FXML private ScrollPane commentiPane;
+    @FXML private ScrollPane commentiPane, metaPane;
     @FXML private ScrollPane notePane;
     @FXML private Label titoloLabel;
     @FXML private Label artistaLabel;
@@ -35,6 +35,7 @@ public class SectionController implements Initializable {
     @FXML private Label annoLabel;
 
     private final Map<Integer, VBox> commentBoxes = new HashMap<>();
+    private Map<Integer, String> mapUtenti = new HashMap<>();
     private final CommentoDao commentoDao = new CommentoDao();
     private final BranoBean brano = ViewNavigator.getBrano();
     private final NotaDao notaDao = new NotaDao();
@@ -42,19 +43,58 @@ public class SectionController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        mapUtenti = notaDao.getUtenti();
+        mapUtenti.forEach((k, v) -> System.out.println(k + ": " + v));
+        if(ViewNavigator.getBrano().isConcerto())
+            caricaMeta();
         caricaCommenti();
         caricaNote();
         mostraCommenti();
 
         commentiButton.setOnAction(e -> mostraCommenti());
         noteButton.setOnAction(e -> mostraNote());
+        metaButton.setOnAction(e -> mostraMeta());
         pubblicaButton.setOnAction(e -> pubblicaCommento());
-        aggiungiNotaButton.setOnAction(e -> apriModalInserimentoNota());
+        aggiungiNotaButton.setOnAction(e -> apriModalNota());
+        aggiungiMetaButton.setOnAction(e -> apriModalMeta());
 
         titoloLabel.setText(brano.getTitolo());
         artistaLabel.setText("Autori: " + brano.getAutori());
         genereLabel.setText("Genere: " + brano.getGenere());
         annoLabel.setText("Anno: " + brano.getAnno());
+    }
+
+    private void caricaMeta() {
+        metaSection.getChildren().clear();
+        List<MetaBean> note = notaDao.getMetaPerBrano(brano.getId());
+        for (MetaBean n : note) {
+            VBox card = new VBox(8);
+            card.getStyleClass().add("note-card");
+            card.setPadding(new Insets(10));
+            card.setMaxWidth(400);
+            card.setMinWidth(300);
+            System.out.println("Utente: "+n.getId());
+            Label titleLabel = new Label("Meta-informazioni di " + mapUtenti.get(n.getIdUtente()));
+            titleLabel.getStyleClass().add("note-segment");
+
+            Label segmentLabel = new Label("Inizio: " + n.getSegmentoInizio() + ", Fine: " + n.getSegmentoFine());
+            segmentLabel.getStyleClass().add("note-text");
+
+            Label testoLabel = new Label(n.getCommento());
+            testoLabel.getStyleClass().add("note-text");
+
+            Label infoLabel = new Label("Registrata il: " + n.getDataRegistrazione());
+            infoLabel.getStyleClass().add("note-info");
+
+            Label strumentiLabel = new Label("Strumenti: " + String.join(", ", n.getStrumenti()));
+            strumentiLabel.getStyleClass().add("note-extra");
+
+            Label esecutoriLabel = new Label("Esecutori: " + String.join(", ", n.getEsecutori()));
+            esecutoriLabel.getStyleClass().add("note-extra");
+
+            card.getChildren().addAll(titleLabel, segmentLabel, testoLabel, infoLabel, strumentiLabel, esecutoriLabel);
+            metaSection.getChildren().add(card);
+        }
     }
 
     @FXML
@@ -78,20 +118,41 @@ public class SectionController implements Initializable {
         commentiPane.setManaged(true);
         notePane.setVisible(false);
         notePane.setManaged(false);
+        metaPane.setVisible(false);
+        metaPane.setManaged(false);
+
 
         commentiButton.getStyleClass().add("active-tab");
         noteButton.getStyleClass().remove("active-tab");
+        metaButton.getStyleClass().remove("active-tab");
     }
 
     @FXML
     private void mostraNote() {
         commentiPane.setVisible(false);
         commentiPane.setManaged(false);
+        metaPane.setVisible(false);
+        metaPane.setManaged(false);
         notePane.setVisible(true);
         notePane.setManaged(true);
 
         noteButton.getStyleClass().add("active-tab");
         commentiButton.getStyleClass().remove("active-tab");
+        metaButton.getStyleClass().remove("active-tab");
+    }
+
+    @FXML
+    private void mostraMeta() {
+        commentiPane.setVisible(false);
+        commentiPane.setManaged(false);
+        metaPane.setVisible(true);
+        metaPane.setManaged(true);
+        notePane.setVisible(false);
+        notePane.setManaged(false);
+
+        noteButton.getStyleClass().remove("active-tab");
+        commentiButton.getStyleClass().remove("active-tab");
+        metaButton.getStyleClass().add("active-tab");
     }
 
     private void caricaCommenti() {
@@ -178,8 +239,11 @@ public class SectionController implements Initializable {
             card.setMaxWidth(400);
             card.setMinWidth(300);
 
+            Label titleLabel = new Label("Nota di "+(mapUtenti.get(n.getId())));
+            titleLabel.getStyleClass().add("note-segment");
+
             Label segmentLabel = new Label("Segmento: " + n.getSegmentoInizio() + " - " + n.getSegmentoFine());
-            segmentLabel.getStyleClass().add("note-segment");
+            segmentLabel.getStyleClass().add("note-text");
 
             Label testoLabel = new Label(n.getTestoLibero());
             testoLabel.getStyleClass().add("note-text");
@@ -199,7 +263,7 @@ public class SectionController implements Initializable {
         }
     }
 
-    private void apriModalInserimentoNota() {
+    private void apriModalNota() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/nota.fxml"));
             Parent root = loader.load();
@@ -214,9 +278,29 @@ public class SectionController implements Initializable {
 
             caricaNote();
         } catch (IOException e) {
-            mostraErrore("Errore durante l'apertura della finestra di inserimento nota.", e);
+            mostraErrore("Errore durante l'apertura della finestra di inserimento nota", e);
         }
     }
+
+    private void apriModalMeta() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/fxml/meta.fxml"));
+            Parent root = loader.load();
+            MetaController controller = loader.getController();
+            controller.setBrano(brano);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Aggiungi Meta-informazione");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            caricaNote();
+        } catch (IOException e) {
+            mostraErrore("Errore durante l'apertura della finestra di inserimento meta-informazione", e);
+        }
+    }
+
 
     private void mostraErrore(String messaggio, Exception e) {
         e.printStackTrace();

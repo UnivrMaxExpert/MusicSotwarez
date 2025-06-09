@@ -10,9 +10,13 @@
 <?import javafx.scene.text.Text?>
 
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
 <AnchorPane styleClass="root" stylesheets="@../css/home-style.css" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.HomeController">
    <children>
-      <VBox AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="120.0" AnchorPane.bottomAnchor="120.0" styleClass="frosted-layer" alignment="CENTER" spacing="20.0">
+      <VBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            AnchorPane.topAnchor="120.0" AnchorPane.bottomAnchor="120.0"
+            alignment="CENTER" spacing="20.0"
+            styleClass="frosted-layer" maxWidth="600">
          <padding>
             <Insets bottom="40" left="40" right="40" top="40" />
          </padding>
@@ -29,12 +33,10 @@
                   <Button fx:id="third" onAction="#handleThirdButton" mnemonicParsing="false" text="ESCI" />
                </children>
             </HBox>
-
-            <!-- ScrollPane per i brani -->
-            <ScrollPane fx:id="scrollPaneBrani" fitToWidth="true" styleClass="custom-scroll-pane">
+            <ScrollPane fx:id="scrollPaneBrani" fitToWidth="true" styleClass="custom-scroll-pane" maxWidth="600">
                <content>
                   <VBox fx:id="vboxBrani" spacing="10.0">
-                     <!-- Qui aggiungerai dinamicamente i brani con commento -->
+                     <Label text="Brani che hai commentato" />
                   </VBox>
                </content>
             </ScrollPane>

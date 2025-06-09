@@ -24,7 +24,7 @@ public class CaricaDao {
     }
 
     public boolean caricaBrano(BranoBean brano) {
-        String sql = "INSERT INTO brani (titolo, genere, autori, file, anno) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO brani (titolo, genere, autori, file, anno, concerto) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -33,6 +33,7 @@ public class CaricaDao {
             stmt.setString(3, brano.getAutori());
             stmt.setString(4, brano.getFile());
             stmt.setInt(5, brano.getAnno());
+            stmt.setBoolean(6, brano.isConcerto());
 
             return stmt.executeUpdate() > 0;
 

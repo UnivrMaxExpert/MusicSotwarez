@@ -1,6 +1,8 @@
 package com.dashapp.controller;
 
 import com.dashapp.model.BranoBean;
+import com.dashapp.model.CaricaDao;
+import com.dashapp.model.CatalogoDao;
 import com.dashapp.model.Genere;
 import com.dashapp.view.ViewNavigator;
 import com.jfoenix.controls.JFXButton;
@@ -21,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -30,7 +33,7 @@ public class HomeController implements Initializable {
 
     @FXML
     private Button second;
-
+    @FXML private VBox vboxBrani;
     @FXML
     private Button third;
 
@@ -43,29 +46,35 @@ public class HomeController implements Initializable {
         first.setFocusTraversable(false);
         second.setFocusTraversable(false);
         third.setFocusTraversable(false);
-        caricaBranoCommentati();
+        CatalogoDao cat  = new CatalogoDao();
+        List<BranoBean> lista = cat.getBraniCommentati();
+        System.out.println(lista.size());
+        for (BranoBean b : lista)
+            caricaBranoCommentati(b);
     }
 
-    private void caricaBranoCommentati() {
-/*
-        HBox hbox = new HBox(15);
+    private void caricaBranoCommentati(BranoBean b)
+    {//NB: Meglio fare un HomeView per la parte grafica da richiamare qua come oggetto
+        HBox hbox = new HBox(10);
         hbox.getStyleClass().add("brano-card");
         hbox.setAlignment(Pos.CENTER_LEFT);
-        hbox.setPrefHeight(110);
-        hbox.setPrefWidth(650);
-        hbox.setPadding(new Insets(15));
+        hbox.setPadding(new Insets(10));
+        hbox.setMaxWidth(Double.MAX_VALUE);  // Così si adatta al VBox contenitore
 
-        VBox vbox = new VBox(6);
+        VBox vbox = new VBox(4);
         vbox.setAlignment(Pos.CENTER_LEFT);
 
-        Text titoloText = new Text(titolo);
+        Text titoloText = new Text(b.getTitolo());
         titoloText.getStyleClass().add("brano-title");
 
-        Text autoreText = new Text("Autore: " + autore);
+        Text autoreText = new Text("Autore: " + b.getAutori());
         autoreText.getStyleClass().add("brano-meta");
 
-        Text dettagliText = new Text(genere + " • " + anno);
+        Text dettagliText = new Text(b.getGenere() + " • " + b.getAnno());
         dettagliText.getStyleClass().add("brano-meta");
+
+        /*Text postatore = new Text("Postato da: "+b);
+        postatore.getStyleClass().add("brano-meta");*/
 
         vbox.getChildren().addAll(titoloText, autoreText, dettagliText);
 
@@ -77,17 +86,13 @@ public class HomeController implements Initializable {
         playButton.getStyleClass().add("circular-button");
 
         playButton.setOnAction(e -> {
-            System.out.println("Riproduzione: " + path);
-            Genere genereEnum = Genere.valueOf(genere.toUpperCase());
-            String[] autoriArray = autore.split("\\s*,\\s*");
-            BranoBean brano = new BranoBean(titolo, genereEnum, path, anno, autoriArray);
-            brano.setId(id);
-            ViewNavigator.setBrano(brano);
+            System.out.println("Riproduzione: " + b.getFile());
+            ViewNavigator.setBrano(b);
             ViewNavigator.navigateToBrano();
         });
 
         hbox.getChildren().addAll(vbox, spacer, playButton);
-        braniContainer.getChildren().add(hbox);*/
+        vboxBrani.getChildren().add(hbox);
     }
 
     @FXML

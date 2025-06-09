@@ -23,6 +23,7 @@
     <HBox alignment="CENTER_LEFT" spacing="10">
         <Button fx:id="commentiButton" styleClass="tab-switch-button" text="Commenti" />
         <Button fx:id="noteButton" styleClass="tab-switch-button" text="Note" />
+        <Button fx:id="metaButton" styleClass="tab-switch-button" text="Meta-informazioni" />
     </HBox>
 
     <!-- Area Commenti -->
@@ -47,6 +48,17 @@
             <Text fill="WHITE" styleClass="comm-title" text="Note" />
             <Button fx:id="aggiungiNotaButton" styleClass="comm-button" text="Aggiungi Nota" />
             <VBox fx:id="noteSection" spacing="10" />
+        </VBox>
+    </ScrollPane>
+
+    <ScrollPane fx:id="metaPane" fitToWidth="true" managed="false" vbarPolicy="AS_NEEDED" visible="false">
+        <VBox spacing="10" styleClass="main-container">
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
+            <Text fill="WHITE" styleClass="comm-title" text="Meta-Informazioni" />
+            <Button fx:id="aggiungiMetaButton" styleClass="comm-button" text="Aggiungi Meta-Informazioni" />
+            <VBox fx:id="metaSection" spacing="10" />
         </VBox>
     </ScrollPane>
 

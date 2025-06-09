@@ -40,7 +40,7 @@ public class CatalogoController {
 
         CatalogoDao cat  = new CatalogoDao();
         List<BranoBean> lists = cat.getBrani();
-        lists.forEach(branoBean -> aggiungiBrano(branoBean.getId(), branoBean.getTitolo(), branoBean.getAutori(), branoBean.getGenere().toString(), branoBean.getAnno(), branoBean.getFile()));
+        lists.forEach(this::aggiungiBrano);
     }
 
     @FXML
@@ -68,7 +68,7 @@ public class CatalogoController {
         sidebarVisible = !sidebarVisible;
     }
 
-    public void aggiungiBrano(int id, String titolo, String autore, String genere, int anno, String path) {
+    public void aggiungiBrano(BranoBean b) {
         HBox hbox = new HBox(15);
         hbox.getStyleClass().add("brano-card");
         hbox.setAlignment(Pos.CENTER_LEFT);
@@ -79,13 +79,13 @@ public class CatalogoController {
         VBox vbox = new VBox(6);
         vbox.setAlignment(Pos.CENTER_LEFT);
 
-        Text titoloText = new Text(titolo);
+        Text titoloText = new Text(b.getTitolo());
         titoloText.getStyleClass().add("brano-title");
 
-        Text autoreText = new Text("Autore: " + autore);
+        Text autoreText = new Text("Autore: " + b.getAutori());
         autoreText.getStyleClass().add("brano-meta");
 
-        Text dettagliText = new Text(genere + " • " + anno);
+        Text dettagliText = new Text(b.getGenere() + " • " + b.getAnno());
         dettagliText.getStyleClass().add("brano-meta");
 
         vbox.getChildren().addAll(titoloText, autoreText, dettagliText);
@@ -98,14 +98,10 @@ public class CatalogoController {
         playButton.getStyleClass().add("circular-button");
 
         playButton.setOnAction(e -> {
-            System.out.println("Riproduzione: " + path);
-            Genere genereEnum = Genere.valueOf(genere.toUpperCase());
-            String[] autoriArray = autore.split("\\s*,\\s*");
-            BranoBean brano = new BranoBean(titolo, genereEnum, path, anno, autoriArray);
-            brano.setId(id);
-            ViewNavigator.setBrano(brano);
-            if(brano.getFile().startsWith("http")) {
-                ViewNavigator.setLink(brano.getFile());
+            System.out.println("Riproduzione: " + b.getFile());
+            ViewNavigator.setBrano(b);
+            if(b.getFile().startsWith("http")) {
+                ViewNavigator.setLink(b.getFile());
                 ViewNavigator.navigateToWebView();
             }
             else

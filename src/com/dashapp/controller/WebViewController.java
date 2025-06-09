@@ -39,6 +39,7 @@ public class WebViewController implements Initializable {
 
                 // Carica il link classico (l'interfaccia YouTube sarà completa)
                 webEngine.load(youtubeUrl);
+                ViewNavigator.setRisorsa(webEngine);
             } else {
                 // Se non è un link YouTube, caricalo normalmente
                 if (!link.startsWith("https://")) {

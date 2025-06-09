@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import com.jfoenix.controls.JFXTextField;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -35,7 +34,8 @@ public class CaricaController implements Initializable {
     @FXML private ComboBox<Genere> menugenre;
     @FXML private TextField titolo;
     @FXML private Button add;
-    @FXML private VBox vboxContainer;
+    @FXML private VBox vboxContainer, autoriContainer;
+    @FXML private CheckBox isConcerto;
     @FXML private Spinner<Integer> anno;
     @FXML private Label fileLabel;
     @FXML private Label statusLabel;
@@ -70,16 +70,14 @@ public class CaricaController implements Initializable {
 
         HBox newHBox = new HBox(15);
         newHBox.setAlignment(Pos.CENTER_LEFT);
-        newHBox.setSpacing(15);
+        newHBox.setSpacing(10);
 
-        Text newText = new Text("Autori:");
-        newText.getStyleClass().add("label");
-        newText.setVisible(false);
         TextField newTextField = new TextField();
-        newTextField.setPrefWidth(250);
+        newTextField.setPrefWidth(381);
+        newTextField.setPromptText("Inserisci autore");
 
-        newHBox.getChildren().addAll(newText, newTextField, add);
-        vboxContainer.getChildren().add(newHBox);
+        newHBox.getChildren().addAll(newTextField, add);
+        autoriContainer.getChildren().add(newHBox);
 
         newHBox.setOpacity(0);
         FadeTransition fade = new FadeTransition(Duration.millis(300), newHBox);
@@ -133,7 +131,7 @@ public class CaricaController implements Initializable {
         }
 
         List<String> autori = new ArrayList<>();
-        for (Node node : vboxContainer.getChildren()) {
+        for (Node node : autoriContainer.getChildren()) {
             if (node instanceof HBox hbox) {
                 for (Node child : hbox.getChildren()) {
                     if (child instanceof TextField tf) {
@@ -152,22 +150,7 @@ public class CaricaController implements Initializable {
         }
 
         BranoBean brano;
-        if (anno.getValue() == null) {
-            brano = new BranoBean(
-                    titoloText,
-                    selectedGenere,
-                    (path != null) ? path : linkText,
-                    autori.toArray(new String[0])
-            );
-        } else {
-            brano = new BranoBean(
-                    titoloText,
-                    selectedGenere,
-                    (path != null) ? path : linkText,
-                    anno.getValue(),
-                    autori.toArray(new String[0])
-            );
-        }
+        brano = new BranoBean(titoloText, selectedGenere, (path != null) ? path : linkText, anno.getValue(), isConcerto.isSelected(), autori.toArray(new String[0]));
 
         boolean successo = caricaDao.caricaBrano(brano);
 
@@ -249,3 +232,5 @@ public class CaricaController implements Initializable {
         statusLabel.setVisible(true);
     }
 }
+
+
