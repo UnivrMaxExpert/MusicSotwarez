@@ -27,8 +27,8 @@
             <VBox alignment="TOP_CENTER" spacing="20" styleClass="main-container">
 
             <!-- Container per il video -->
-               <StackPane alignment="CENTER" minHeight="550" prefWidth="980">
-                  <WebView fx:id="webview" styleClass="video-wrapper" />
+               <StackPane alignment="CENTER" minHeight="550" prefWidth="980" >
+                  <WebView fx:id="webview" />
 
                </StackPane>
 

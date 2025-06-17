@@ -5,7 +5,7 @@ import com.dashapp.util.DatabaseManager;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+    /*Permette di caricare/prendere i commenti salvati nel db*/
 public class CommentoDao {
 
     public void aggiungiCommento(int branoId, int autoreId, String testo, Integer parentId) throws SQLException {
@@ -24,20 +24,20 @@ public class CommentoDao {
         }
     }
 
-    public List<Commento> getCommentiByBranoId(int branoId) throws SQLException {
+    public List<CommentoBean> getCommentiByBranoId(int branoId) throws SQLException {
         String sql = """
             SELECT c.id, c.utente, c.parent, c.brano, c.testo, c.data_creazione, u.username
             FROM commenti c JOIN utenti u ON c.utente = u.id
             WHERE c.brano = ?
             ORDER BY c.data_creazione ASC
         """;
-        List<Commento> all = new ArrayList<>();
+        List<CommentoBean> all = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, branoId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Commento c = new Commento();
+                CommentoBean c = new CommentoBean();
                 c.setId(rs.getInt("id"));
                 c.setBranoId(rs.getInt("brano"));
 

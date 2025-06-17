@@ -7,7 +7,7 @@
 <VBox fx:id="root" xmlns:fx="http://javafx.com/fxml"
       stylesheets="@../css/visualizza-style.css"
       fx:controller="com.dashapp.controller.SectionController"
-      spacing="10" styleClass="section-component">
+      spacing="10" styleClass="main-container">
 
     <!-- Info Brano -->
     <HBox fx:id="infoBrano" alignment="CENTER_LEFT" spacing="10">

@@ -3,7 +3,7 @@ package com.dashapp.model;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
-
+    /*Classe dato per le note*/
 public class NotaBean {
     private int id;
     private int idBrano;

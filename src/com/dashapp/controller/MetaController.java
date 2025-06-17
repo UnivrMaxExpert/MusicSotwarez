@@ -23,14 +23,13 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-
+    /*Gestisce l'inserimento di meta-informazioni in concerti di youtube, prendendo i dati dal fxml e passandogli al dao per essere inseriti nel db*/
 public class MetaController implements Initializable {
     @FXML private DatePicker dataPicker;
     @FXML private TextField InizioField;
     @FXML private TextField FineField;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     @FXML private TextArea testoLiberoArea;
-    private NotaDao notadao = new NotaDao();
     private final NotaDao notaDao = new NotaDao();
     private BranoBean brano;
     @FXML private CheckComboBox<String> strumentiComboBox;
@@ -84,7 +83,7 @@ public class MetaController implements Initializable {
             alert.showAndWait();
         }
     }
-
+    /*Finestre usate per inserire le meta-informazioni*/
     private void mostraDialogAggiuntaStrumenti() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nuovo Strumento");

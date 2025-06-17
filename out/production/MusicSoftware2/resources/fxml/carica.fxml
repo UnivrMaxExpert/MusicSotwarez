@@ -51,8 +51,26 @@
                   <VBox spacing="5">
                      <Label prefHeight="17.0" prefWidth="416.0" styleClass="label" text="Anno:                                         Tipologia evento:" />
                      <HBox alignment="CENTER_LEFT" spacing="18.0">
-                        <Spinner fx:id="anno" editable="true" prefHeight="40.0" prefWidth="149.0" styleClass="spinner" />
-                        <CheckBox fx:id="isConcerto" styleClass="check-box" text="Concerto (evento dal vivo)" />
+                        <TextField fx:id="anno" editable="true" prefHeight="40.0" prefWidth="149.0" promptText="Inserisci anno" styleClass="text-field" />
+                        <VBox prefHeight="0.0" prefWidth="198.0">
+                           <children>
+                              <CheckBox fx:id="isConcerto" styleClass="check-box" text="Concerto" />
+                              <CheckBox fx:id="isInter" styleClass="check-box" text="Brano autointerpretato" />
+                           </children>
+                        </VBox>
+                     </HBox>
+                  </VBox>
+
+                  <VBox fx:id="ruoloContainer" managed="false" spacing="5" visible="false">
+                     <Label styleClass="label" text="Ruolo:" />
+                     <ComboBox fx:id="ruoloCombo" prefHeight="38.0" prefWidth="238.0" promptText="Scegli il tuo ruolo" styleClass="custom-combo" />
+                  </VBox>
+
+                  <VBox fx:id="strumentiContainer" managed="false" spacing="5" visible="false">
+                     <Label styleClass="label" text="Strumento:" />
+                     <HBox alignment="CENTER_LEFT" spacing="10">
+                        <TextField fx:id="strumento" prefHeight="38.0" prefWidth="381.0" promptText="Inserisci strumento" styleClass="text-field" />
+                        <Button fx:id="add2" onAction="#handleAdd2" styleClass="circular-button" text="+" />
                      </HBox>
                   </VBox>
 
@@ -69,9 +87,6 @@
                         <Label fx:id="fileLabel" styleClass="label" text="Nessun file selezionato" />
                      </HBox>
                   </VBox>
-
-                  <!-- Label di stato -->
-                  <Label fx:id="statusLabel" styleClass="statusLabel" text="Status" visible="false" />
 
                   <!-- Pulsante INVIA -->
                   <Button fx:id="inviaButton" onAction="#handleInvia" styleClass="login-button" text="Carica" />

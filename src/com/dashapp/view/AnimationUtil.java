@@ -5,7 +5,7 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 
 /**
- * Utility class to apply predefined animations to any JavaFX Node.
+ * Classe usata per le animazioni con metodi statici
  */
 public class AnimationUtil {
     private static FadeTransition ft;

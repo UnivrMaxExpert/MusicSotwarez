@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.RequestController" fx:id="scrollPane" prefHeight="400.0" prefWidth="600.0">
+    <content>
+        <VBox fx:id="box" spacing="10.0" style="-fx-background-color: white; -fx-padding: 10;">
+
+        </VBox>
+    </content>
+</ScrollPane>

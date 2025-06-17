@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
-
+    /*Gestisce la sezione di informazioni del brano, commenti e note di un brano, funziona ma sarebbe da perfezionare*/
 public class SectionController implements Initializable {
 
     @FXML private VBox root;
@@ -40,6 +40,7 @@ public class SectionController implements Initializable {
     private final BranoBean brano = ViewNavigator.getBrano();
     private final NotaDao notaDao = new NotaDao();
     private Integer commentoSelezionatoPerRisposta = null;
+    private VisualizzaDao vis = new VisualizzaDao();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -50,6 +51,7 @@ public class SectionController implements Initializable {
         caricaCommenti();
         caricaNote();
         mostraCommenti();
+        vis.carica();
 
         commentiButton.setOnAction(e -> mostraCommenti());
         noteButton.setOnAction(e -> mostraNote());
@@ -58,7 +60,7 @@ public class SectionController implements Initializable {
         aggiungiNotaButton.setOnAction(e -> apriModalNota());
         aggiungiMetaButton.setOnAction(e -> apriModalMeta());
 
-        titoloLabel.setText(brano.getTitolo());
+        titoloLabel.setText(brano.getTitolo()+" caricato da "+vis.getUtente(brano.getUtente()));
         artistaLabel.setText("Autori: " + brano.getAutori());
         genereLabel.setText("Genere: " + brano.getGenere());
         annoLabel.setText("Anno: " + brano.getAnno());
@@ -160,16 +162,16 @@ public class SectionController implements Initializable {
         commentBoxes.clear();
 
         try {
-            List<Commento> listaCommenti = commentoDao.getCommentiByBranoId(brano.getId());
-            Map<Integer, List<Commento>> repliesMap = new HashMap<>();
+            List<CommentoBean> listaCommenti = commentoDao.getCommentiByBranoId(brano.getId());
+            Map<Integer, List<CommentoBean>> repliesMap = new HashMap<>();
 
-            for (Commento c : listaCommenti) {
+            for (CommentoBean c : listaCommenti) {
                 if (c.getParentId() != null) {
                     repliesMap.computeIfAbsent(c.getParentId(), k -> new ArrayList<>()).add(c);
                 }
             }
 
-            for (Commento c : listaCommenti) {
+            for (CommentoBean c : listaCommenti) {
                 if (c.getParentId() == null) {
                     VBox commentBox = creaBoxCommento(c, repliesMap);
                     commentSection.getChildren().add(commentBox);
@@ -180,36 +182,51 @@ public class SectionController implements Initializable {
         }
     }
 
-    private VBox creaBoxCommento(Commento commento, Map<Integer, List<Commento>> repliesMap) {
-        VBox commentBox = new VBox(5);
+    private VBox creaBoxCommento(CommentoBean commentoBean, Map<Integer, List<CommentoBean>> repliesMap) {
+        VBox commentBox = new VBox();
         commentBox.getStyleClass().add("comment-box");
         commentBox.setPadding(new Insets(8));
+        commentBox.setSpacing(5);
         commentBox.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: 12; -fx-border-color: #cccccc; -fx-border-width: 1;");
 
-        Label autoreLabel = new Label(commento.getAutore());
+        // Nome autore
+        Label autoreLabel = new Label(commentoBean.getAutore());
         autoreLabel.getStyleClass().add("comment-author");
 
-        Label testoLabel = new Label(commento.getTesto());
+        // Testo commento
+        Label testoLabel = new Label(commentoBean.getTesto());
         testoLabel.getStyleClass().add("comment-text");
         testoLabel.setWrapText(true);
+        commentBox.getChildren().addAll(
+                autoreLabel,
+                testoLabel
+        );
+        if (commentoBean.getAutoreId()!=ViewNavigator.getUtenteId()) {
+            Button rispondiButton = new Button("Rispondi");
+            rispondiButton.getStyleClass().add("reply-button");
 
-        VBox repliesContainer = new VBox(5);
+            rispondiButton.setOnAction(e -> {
+                commentoSelezionatoPerRisposta = commentoBean.getId();
+                newCommentField.requestFocus();
+                newCommentField.setPromptText("Rispondi a " + commentoBean.getAutore());
+            });
+
+            commentBox.getChildren().add(rispondiButton);
+        }
+
+        // Container per le risposte
+        VBox repliesContainer = new VBox();
+        repliesContainer.setSpacing(5);
         repliesContainer.setPadding(new Insets(5, 0, 0, 20));
 
-        List<Commento> replies = repliesMap.get(commento.getId());
+        List<CommentoBean> replies = repliesMap.get(commentoBean.getId());
+
+        // Bottone toggle risposte (inizialmente nullo)
         Button toggleRepliesButton;
 
         if (replies != null && !replies.isEmpty()) {
             toggleRepliesButton = new Button("+" + replies.size() + " Risposte");
             toggleRepliesButton.getStyleClass().add("toggle-replies-btn");
-
-            for (Commento reply : replies) {
-                VBox replyBox = creaBoxCommento(reply, repliesMap);
-                repliesContainer.getChildren().add(replyBox);
-            }
-
-            repliesContainer.setVisible(false);
-            repliesContainer.setManaged(false);
 
             toggleRepliesButton.setOnAction(e -> {
                 boolean isVisible = repliesContainer.isVisible();
@@ -217,15 +234,27 @@ public class SectionController implements Initializable {
                 repliesContainer.setManaged(!isVisible);
                 toggleRepliesButton.setText(isVisible ? ("+" + replies.size() + " Risposte") : "- Riduci Risposte");
             });
+
+            for (CommentoBean reply : replies) {
+                VBox replyBox = creaBoxCommento(reply, repliesMap);
+                repliesContainer.getChildren().add(replyBox);
+            }
+
+            repliesContainer.setVisible(false);
+            repliesContainer.setManaged(false);
         } else {
             toggleRepliesButton = null;
         }
 
-        commentBox.getChildren().addAll(autoreLabel, testoLabel);
-        if (toggleRepliesButton != null) commentBox.getChildren().add(toggleRepliesButton);
+        // Ora aggiungiamo gli elementi nell’ordine giusto
+
+        if (toggleRepliesButton != null)
+            commentBox.getChildren().add(toggleRepliesButton);
+
         commentBox.getChildren().add(repliesContainer);
 
-        commentBoxes.put(commento.getId(), commentBox);
+        commentBoxes.put(commentoBean.getId(), commentBox);
+
         return commentBox;
     }
 

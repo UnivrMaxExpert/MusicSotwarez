@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-
+    /*Finestra principale dove vengono aperti i vari nodi che sono le altre finestre*/
 public class MainController {
     @FXML
     private BorderPane mainContainer;

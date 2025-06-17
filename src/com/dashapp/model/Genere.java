@@ -1,5 +1,5 @@
 package com.dashapp.model;
-
+    /*Enumerazione per i generi*/
 public enum Genere
 {
     POP,

@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-public class Commento implements Serializable
+    /*Classe dato per salvare i commenti*/
+public class CommentoBean implements Serializable
 {
         private int id;
         private Integer parentId;
@@ -13,7 +13,7 @@ public class Commento implements Serializable
         private String autore;
         private String testo;
         private LocalDateTime data;
-        private List<Commento> risposte = new ArrayList<>();
+        private List<CommentoBean> risposte = new ArrayList<>();
 
     public int getAutoreId() {
         return autoreId;
@@ -26,11 +26,11 @@ public class Commento implements Serializable
     private int autoreId;
         // Getters & setters
 
-        public void aggiungiRisposta(Commento risposta) {
+        public void aggiungiRisposta(CommentoBean risposta) {
             risposte.add(risposta);
         }
 
-        public List<Commento> getRisposte() {
+        public List<CommentoBean> getRisposte() {
             return risposte;
         }
 
@@ -80,7 +80,7 @@ public class Commento implements Serializable
         this.data = data;
     }
 
-    public void setRisposte(List<Commento> risposte) {
+    public void setRisposte(List<CommentoBean> risposte) {
         this.risposte = risposte;
     }
 }

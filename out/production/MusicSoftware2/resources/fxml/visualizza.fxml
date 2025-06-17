@@ -26,43 +26,65 @@
                   <Insets bottom="10" left="10" right="10" top="10" />
                </padding>
                <!-- Video e controlli -->
-               <StackPane fx:id="videoContainer" alignment="TOP_CENTER" minHeight="550" prefWidth="980" styleClass="video-wrapper">
-                  <!-- Placeholder audio -->
-                  <ImageView fx:id="audioPlaceholder"
-                             fitHeight="600"
-                             preserveRatio="false"
-                             visible="false"
-                              fitWidth="980"/>
+               <StackPane fx:id="videoContainer" alignment="CENTER" minHeight="550" prefWidth="980" styleClass="video-wrapper" xmlns:fx="http://javafx.com/fxml">
+
+                  <!-- Placeholder per audio -->
+                  <ImageView fx:id="audioPlaceholder" fitHeight="600" fitWidth="980" preserveRatio="false" styleClass="audio-placeholder" visible="false" />
+
                   <!-- Video player -->
-                  <MediaView fx:id="mediaView" fitWidth="980" />
-                  <!-- Controlli video -->
-                  <VBox fx:id="videoControls" alignment="BOTTOM_CENTER" mouseTransparent="false" opacity="0.0" spacing="8" styleClass="video-controls">
-                     <VBox.margin>
-                        <Insets bottom="20" />
-                     </VBox.margin>
+                  <MediaView fx:id="mediaView" fitWidth="980" preserveRatio="true" styleClass="media-view" />
+
+                  <!-- Controlli video in sovraimpressione -->
+                  <VBox fx:id="videoControls" alignment="BOTTOM_CENTER" mouseTransparent="false" opacity="1.0" spacing="8" styleClass="video-controls" translateY="-50.0">
+
+                     <!-- Slider di avanzamento -->
                      <Slider fx:id="progressSlider" prefWidth="960" />
+
+                     <!-- Pulsanti -->
                      <HBox fx:id="buttonBar" alignment="CENTER_LEFT" spacing="10">
                         <Button fx:id="rewindButton" styleClass="video-button" text="⏪" />
                         <Button fx:id="toggleButton" styleClass="video-button" text="▶" />
                         <Button fx:id="forwardButton" styleClass="video-button" text="⏩" />
                         <Label fx:id="timeLabel" text="00:00 / 00:00" />
+
                         <HBox alignment="CENTER_LEFT" spacing="5">
                            <Label style="-fx-font-size: 16px; -fx-text-fill: white;" text="🔊" />
                            <Slider fx:id="volumeSlider" max="1" min="0" prefWidth="80" value="0.5" />
                         </HBox>
+
                         <Button fx:id="scaricaButton" styleClass="video-button" text="⬇" />
                      </HBox>
                   </VBox>
                </StackPane>
+
                <!-- Info brano -->
                <HBox fx:id="infoBrano" alignment="CENTER_LEFT" spacing="10">
-                  <VBox spacing="5">
-                     <Label fx:id="titoloLabel" styleClass="info-label" text="Titolo" />
-                     <Label fx:id="artistaLabel" styleClass="info-label" text="Artista" />
-                     <Label fx:id="genereLabel" styleClass="info-label" text="Genere" />
-                     <Label fx:id="annoLabel" styleClass="info-label" text="Anno" />
+                  <VBox prefWidth="986.0" spacing="5">
+                     <HBox prefHeight="30.0" prefWidth="400.0" spacing="10" alignment="CENTER_LEFT">
+                        <children>
+                           <Label fx:id="titoloLabel" styleClass="info-label" text="Titolo" />
+                           <Region HBox.hgrow="ALWAYS" />
+                           <Label fx:id="interp" styleClass="tag-label" text="Autointerpretato" visible="true" managed="true" />
+                        </children>
+                     </HBox>
+                     <HBox prefHeight="30.0" prefWidth="200.0">
+                        <children>
+                           <Label fx:id="artistaLabel" styleClass="info-label" text="Artista" />
+                        </children>
+                     </HBox>
+                     <HBox prefHeight="30.0" prefWidth="200.0">
+                        <children>
+                           <Label fx:id="genereLabel" styleClass="info-label" text="Genere" />
+                        </children>
+                     </HBox>
+                     <HBox prefHeight="30.0" prefWidth="200.0">
+                        <children>
+                           <Label fx:id="annoLabel" styleClass="info-label" text="Anno" />
+                        </children>
+                     </HBox>
                   </VBox>
                </HBox>
+
                <!-- Tab switch -->
                <HBox alignment="CENTER_LEFT" spacing="10">
                   <Button fx:id="commentiButton" onAction="#mostraCommenti" styleClass="tab-switch-button" text="Commenti" />

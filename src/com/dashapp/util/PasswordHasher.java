@@ -3,7 +3,7 @@ package com.dashapp.util;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * PasswordHasher grants the possibility to migrate to other libraries
+ * PasswordHasher che fa l'hash della password e verifica se una password a quell'hash(utile per la sicurezza delle password)
  */
 public class PasswordHasher
 {

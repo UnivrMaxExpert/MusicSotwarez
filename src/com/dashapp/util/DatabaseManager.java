@@ -3,7 +3,7 @@ package com.dashapp.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
+    /*Permette la connessione al db attraverso un metodo statico(metodo che si chiama anche senza aver l'oggetto istanziato)*/
 public class DatabaseManager {
 
     private static final String URL = "jdbc:mysql://localhost:3306/musicasoftware";

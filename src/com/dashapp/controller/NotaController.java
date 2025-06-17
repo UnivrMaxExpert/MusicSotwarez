@@ -22,7 +22,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-
+    /*Fa le stesse cose che fa più o meno il MetaController*/
 public class NotaController implements Initializable {
     @FXML private TextField durataField;
     @FXML private TextField luogoField;

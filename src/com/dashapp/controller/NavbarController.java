@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
+    /*Controller che gestisce la navbar che viene importata in ogni fxml*/
 public class NavbarController implements Initializable {
     @FXML
     private Button home, carica, catalogo;

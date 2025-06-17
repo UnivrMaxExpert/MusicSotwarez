@@ -18,7 +18,8 @@ import javafx.util.Duration;
 import java.util.List;
 
 public class CatalogoController {
-
+    /*Stampa sullo scrollpane i vari brani presi dal database e poi con una barra laterale si può fare ricerca
+    * in locale prendendo i dati dal database attraverso dizionari <- Non ancore implementato*/
     @FXML
     private VBox sidebar;
 

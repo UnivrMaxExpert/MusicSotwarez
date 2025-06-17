@@ -2,22 +2,43 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.media.*?>
 
-<StackPane fx:id="videoContainer" prefHeight="450" prefWidth="800" stylesheets="@../css/prova-style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.ProvaController">
+<StackPane fx:id="videoContainer" alignment="TOP_CENTER" minHeight="550" prefWidth="980" styleClass="video-wrapper" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.ProvaController">
 
-    <VBox fx:id="videoControls" alignment="BOTTOM_CENTER" managed="false" mouseTransparent="false" spacing="8" styleClass="video-controls-overlay" visible="false" StackPane.alignment="BOTTOM_CENTER">
-       <MediaView fx:id="mediaView" fitHeight="${videoContainer.height}" fitWidth="${videoContainer.width}" preserveRatio="true" /> <Slider fx:id="progressSlider" prefWidth="780" /> <HBox alignment="TOP_CENTER" spacing="10">
-        <Button fx:id="playPauseButton" text="▶" />
-        <Button fx:id="rewindButton" text="⏪" />
-        <Button fx:id="forwardButton" text="⏩" />
-        <Label fx:id="timeLabel" text="00:00 / 00:00" />
-        <Slider fx:id="volumeSlider" max="1" min="0" value="0.5" />
-    </HBox>
-        <padding>
-            <Insets bottom="10" left="10" right="10" top="10" />
-        </padding>
-    </VBox>
+    <children>
+        <!-- Placeholder per tracce audio -->
+        <ImageView fx:id="audioPlaceholder" fitHeight="450" fitWidth="800" preserveRatio="false" styleClass="audio-placeholder" visible="false" />
 
+           <!-- MediaView per i video -->
+        <MediaView fx:id="mediaView" fitHeight="550.0" fitWidth="980.0" preserveRatio="true" styleClass="media-view" />
+
+        <!-- Controlli video in overlay -->
+        <VBox fx:id="videoControls" alignment="BOTTOM_CENTER" mouseTransparent="false" opacity="1.0" spacing="8" styleClass="video-controls" translateY="-60.0">
+
+            <Slider fx:id="progressSlider" prefWidth="760" />
+
+            <HBox fx:id="buttonBar" alignment="CENTER_LEFT" spacing="10">
+                <Button fx:id="rewindButton" styleClass="video-button" text="⏪" />
+                <Button fx:id="toggleButton" styleClass="video-button" text="▶" />
+                <Button fx:id="forwardButton" styleClass="video-button" text="⏩" />
+                <Label fx:id="timeLabel" text="00:00 / 00:00" />
+
+                <HBox alignment="CENTER_LEFT" spacing="5">
+                    <Label style="-fx-font-size: 16px; -fx-text-fill: white;" text="🔊" />
+                    <Slider fx:id="volumeSlider" max="1" min="0" prefWidth="80" value="0.5" />
+                </HBox>
+
+                <Button fx:id="scaricaButton" styleClass="video-button" text="⬇" />
+            <VBox.margin>
+               <Insets bottom="60.0" />
+            </VBox.margin>
+            </HBox>
+         <StackPane.margin>
+            <Insets />
+         </StackPane.margin>
+        </VBox>
+    </children>
 </StackPane>

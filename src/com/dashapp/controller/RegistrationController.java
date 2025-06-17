@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 import com.dashapp.model.UtenteBean;
 import com.dashapp.model.AccessoDao;
-
+    /*Controller che gestisce la registrazione degli utenti*/
 public class RegistrationController implements Initializable
 {
     @FXML private TextField username;

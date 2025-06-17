@@ -14,8 +14,9 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * This class handles navigation between different views in the application.
- * It works as a bridge between controllers and views, allowing for simplified navigation.
+ * Questa classe permette di salvare variabili utili nella navigazione(utente, brano scelto per essere visualizzato, ...), tipo variabili di sessione
+ * Poi permette anche lo spostamento tra le varie view
+ * Tiene traccia anche di dove siamo, ponendo allo spostamento da view a view un identificativo univoco
  */
 public class ViewNavigator {
     // Reference to the main controller
@@ -195,5 +196,9 @@ public class ViewNavigator {
 
     public static void setUtenteId(int id2) {
          id = id2;
+    }
+
+    public static void navigateToRequest() {
+        loadView("request.fxml");
     }
 }

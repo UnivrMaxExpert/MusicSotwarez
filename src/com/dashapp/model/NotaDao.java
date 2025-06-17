@@ -5,7 +5,7 @@ import com.dashapp.util.DatabaseManager;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
-
+    /*Permette di caricare/prendere note dal db*/
 public class NotaDao {
     private Connection conn;
     private String query;
@@ -134,7 +134,7 @@ public class NotaDao {
     public int inserisciMeta(MetaBean meta) {
         String query = """
         INSERT INTO meta 
-        (brano, utente, titolo_brano, inizio, fine, commento, data_inserimento)
+        (brano, utente, titolo_brano, inizio, fine, commentoBean, data_inserimento)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
 
@@ -215,7 +215,12 @@ public class NotaDao {
         }
     }
 
-
+/*Caused by: java.lang.NullPointerException: Cannot invoke "String.split(String)" because "autoriStr" is null
+	at com.dashapp.model.CatalogoDao.getBrani(CatalogoDao.java:39)
+	at com.dashapp.controller.CatalogoController.initialize(CatalogoController.java:42)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	... 64 more
+Error loading view: catalogo.fxml*/
 
     // Inserisce strumenti o esecutori per una nota/meta
     public boolean inserisciStrumenti(boolean isStrumento, boolean isMeta, int entityId, List<Integer> lista) {
@@ -291,7 +296,7 @@ public class NotaDao {
     public List<MetaBean> getMetaPerBrano(int idBrano) {
         List<MetaBean> metaList = new ArrayList<>();
         String queryMeta = """
-            SELECT id, brano, utente, titolo_brano, data_inserimento, inizio, fine, commento
+            SELECT id, brano, utente, titolo_brano, data_inserimento, inizio, fine, commentoBean
             FROM meta
             WHERE brano = ?
             """;
@@ -310,7 +315,7 @@ public class NotaDao {
                             rsMeta.getDate("data_inserimento"),
                             rsMeta.getTime("inizio"),
                             rsMeta.getTime("fine"),
-                            rsMeta.getString("commento")
+                            rsMeta.getString("commentoBean")
                     );
                     System.out.println(meta.toString());
                     meta.setEsecutori(getEsecutoriPerMeta(meta.getId(), conn));

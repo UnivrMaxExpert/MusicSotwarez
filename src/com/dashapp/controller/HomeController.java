@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
-
+    /*Home per gli utenti dove scelgono se caricare brani, visualizzare il catalogo oppure uscire <-ultima non implementata ma semplice
+    * C'è anche un pannello dove si vedono i vari brani su cui si è lasciato un commento*/
     @FXML
     private Button first;
 

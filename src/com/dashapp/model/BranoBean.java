@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+    /*Classe che diviene il dato trasportato da controller a db utilizzato per i brani*/
 public class BranoBean implements Serializable
 {
     private int id;
@@ -18,12 +18,14 @@ public class BranoBean implements Serializable
     private String file;
     private int anno;
     private boolean concerto;
+    private Ruoli ruolo;
 
     public BranoBean() {
     }
 
-    public BranoBean(String titolo, Genere genere, String file , int anno, boolean concerto, String... autorix) {
+    public BranoBean(String titolo, int utente, Genere genere, String file , int anno, boolean concerto, String... autorix) {
         this.titolo = titolo;
+        this.utente = utente;
         this.genere = genere;
         autori = new ArrayList<>();
         autori.addAll(Arrays.asList(autorix));
@@ -93,11 +95,31 @@ public class BranoBean implements Serializable
 
     @Override
     public String toString() {
-        return "id=" + id +
+        return "BranoBean{" +
+                "id=" + id +
+                ", utente=" + utente +
                 ", titolo='" + titolo + '\'' +
                 ", autori=" + autori +
                 ", genere=" + genere +
                 ", file='" + file + '\'' +
-                ", anno=" + anno;
+                ", anno=" + anno +
+                ", concerto=" + concerto +
+                '}';
+    }
+
+    public int getUtente() {
+        return utente;
+    }
+
+    public void setUtente(int utente) {
+        this.utente = utente;
+    }
+
+    public Ruoli getRuolo() {
+        return ruolo;
+    }
+
+    public void setRuolo(Ruoli ruolo) {
+        this.ruolo = ruolo;
     }
 }

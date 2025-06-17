@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class HomeAdminController {
-
+    /*Home per gli utenti admin dove sceglie cosa fare attraverso i vari pulsanti <- Da sistemare ma semplice*/
     @FXML
     private Button first;
 
