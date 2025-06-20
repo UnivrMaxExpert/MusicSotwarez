@@ -296,7 +296,7 @@ Error loading view: catalogo.fxml*/
     public List<MetaBean> getMetaPerBrano(int idBrano) {
         List<MetaBean> metaList = new ArrayList<>();
         String queryMeta = """
-            SELECT id, brano, utente, titolo_brano, data_inserimento, inizio, fine, commentoBean
+            SELECT id, brano, utente, titolo_brano, data_inserimento, inizio, fine, commento
             FROM meta
             WHERE brano = ?
             """;
@@ -315,7 +315,7 @@ Error loading view: catalogo.fxml*/
                             rsMeta.getDate("data_inserimento"),
                             rsMeta.getTime("inizio"),
                             rsMeta.getTime("fine"),
-                            rsMeta.getString("commentoBean")
+                            rsMeta.getString("commento")
                     );
                     System.out.println(meta.toString());
                     meta.setEsecutori(getEsecutoriPerMeta(meta.getId(), conn));

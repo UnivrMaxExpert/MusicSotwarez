@@ -29,7 +29,7 @@
                <StackPane fx:id="videoContainer" alignment="CENTER" minHeight="550" prefWidth="980" styleClass="video-wrapper" xmlns:fx="http://javafx.com/fxml">
 
                   <!-- Placeholder per audio -->
-                  <ImageView fx:id="audioPlaceholder" fitHeight="600" fitWidth="980" preserveRatio="false" styleClass="audio-placeholder" visible="false" />
+                  <ImageView fx:id="audioPlaceholder" fitHeight="600" fitWidth="980" preserveRatio="false" styleClass="audio-placeholder" visible="true" />
 
                   <!-- Video player -->
                   <MediaView fx:id="mediaView" fitWidth="980" preserveRatio="true" styleClass="media-view" />
@@ -98,7 +98,7 @@
                         <Insets bottom="10" left="10" right="10" top="10" />
                      </padding>
                      <Text fill="WHITE" styleClass="comm-title" text="Commenti" />
-                     <TextField fx:id="newCommentField" promptText="Aggiungi un commento..." styleClass="comm-field" />
+                     <TextField fx:id="newCommentField" promptText="Aggiungi un commentoBean..." styleClass="comm-field" />
                      <Button fx:id="pubblicaButton" styleClass="comm-button" text="Pubblica" />
                      <VBox fx:id="commentSection" spacing="10" />
                   </VBox>

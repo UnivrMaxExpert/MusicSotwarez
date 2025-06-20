@@ -62,6 +62,7 @@ public class MetaController implements Initializable {
             meta.setIdBrano(brano.getId());
             meta.setIdUtente(ViewNavigator.getUtenteId());
             meta.setDataRegistrazione(Date.valueOf(dataPicker.getValue()));
+            meta.setTitolo(brano.getTitolo());
             meta.setSegmentoFine(timeFine);
             meta.setSegmentoInizio(timeInizio);
             meta.setCommento(testoLiberoArea.getText());

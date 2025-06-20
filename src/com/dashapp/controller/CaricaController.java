@@ -164,7 +164,7 @@ public class CaricaController implements Initializable {
         String linkText = youtubeLink.getText().trim();
         Genere selectedGenere = menugenre.getValue();
         if (path != null)
-            caricaDao.copiaBrano(path);
+            path = caricaDao.copiaBrano(path);
 
         if (titoloText.isEmpty() || selectedGenere == null || (path == null && linkText.isEmpty())) {
             showStatus("Compila tutti i campi obbligatori.");
@@ -251,17 +251,37 @@ public class CaricaController implements Initializable {
             return;
         }
 
-        BranoBean brano;
-        brano = new BranoBean(titoloText, ViewNavigator.getUtenteId(),
-                selectedGenere, (path != null) ? path : linkText,
-                anno.getText().isEmpty() ? null : Integer.valueOf(anno.getText())
-                , isConcerto.isSelected(), autori.toArray(new String[0]));
+        BranoBean brano = new BranoBean(
+                titoloText,
+                ViewNavigator.getUtenteId(),
+                selectedGenere,
+                (path != null) ? path : linkText,
+                anno.getText().isEmpty() ? null : Integer.parseInt(anno.getText()),
+                isConcerto.isSelected(),
+                autori.toArray(new String[0])
+        );
+
         brano.setId(caricaDao.caricaBrano(brano));
-        if(isInter.isSelected())
+
+        if (isInter.isSelected()) {
             brano.setRuolo(caricaDao.autoInterpretato(brano, String.valueOf(ruoloCombo.getValue())));
-        boolean caricamento = caricaDao.caricaStrumentiPerBrano(brano.getId(), strumenti);
-        boolean caricamento2 = caricaDao.caricaArtistiPerBrano(brano.getId(), Arrays.stream(brano.getAutori().split(",")).toList());
-        if (caricamento && caricamento2) {
+        }
+
+// Valori booleani per esito dei caricamenti
+        boolean caricamentoStrumenti = true;
+        boolean caricamentoArtisti = false;
+
+        if (strumenti != null) {
+            caricamentoStrumenti = caricaDao.caricaStrumentiPerBrano(brano.getId(), strumenti);
+        }
+
+        caricamentoArtisti = caricaDao.caricaArtistiPerBrano(
+                brano.getId(),
+                Arrays.stream(brano.getAutori().split(",")).toList()
+        );
+
+// Mostra risultato
+        if (caricamentoStrumenti && caricamentoArtisti) {
             showSuccessDialog();
         } else {
             showErrorAlert();

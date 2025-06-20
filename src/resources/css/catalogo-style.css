@@ -161,9 +161,94 @@
     -fx-scale-y: 0.95;
     -fx-effect: innershadow(gaussian, #90caf9, 5, 0.3, 0, 1);
 }
+.sidebar-textfield {
+    -fx-background-color: #2b2b2b;   /* sfondo scuro */
+    -fx-text-fill: white;            /* testo bianco */
+    -fx-prompt-text-fill: #888888;   /* placeholder grigio chiaro */
+    -fx-border-color: #444444;       /* bordo scuro */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 6 10;
+    -fx-font-size: 14px;
+    -fx-cursor: text;
+}
 
+.sidebar-textfield:hover {
+    -fx-border-color: #666666;       /* bordo più chiaro su hover */
+}
 
+.sidebar-textfield:focused {
+    -fx-border-color: #0099ff;       /* bordo azzurro quando attivo */
+    -fx-background-color: #1e1e1e;   /* sfondo leggermente più scuro */
+}
 
+.check-combo-box {
+    -fx-background-color: #2b2b2b;       /* sfondo scuro */
+    -fx-text-fill: white;                /* testo bianco */
+    -fx-border-color: #444444;           /* bordo scuro */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 6 10;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
 
+.check-combo-box:hover {
+    -fx-border-color: #666666;           /* bordo più chiaro su hover */
+}
 
+.check-combo-box:focused {
+    -fx-border-color: #0099ff;           /* bordo azzurro quando attivo */
+    -fx-background-color: #1e1e1e;       /* sfondo leggermente più scuro */
+}
 
+/* Etichetta (testo visibile nella combo chiusa) */
+.check-combo-box .label {
+    -fx-text-fill: white;
+}
+
+/* Freccia del menu */
+.check-combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.check-combo-box .arrow {
+    -fx-background-color: #cccccc;
+}
+
+/* Popup della lista */
+.check-combo-box .combo-box-popup .list-view {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #444444;
+}
+
+.check-combo-box .combo-box-popup .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-font-size: 13px;
+    -fx-padding: 4 8;
+}
+
+.check-combo-box .combo-box-popup .list-cell:hover {
+    -fx-background-color: #3c3c3c;
+}
+
+.check-combo-box .combo-box-popup .list-cell:selected {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #90caf9;
+}
+
+/* CheckBox interna */
+.check-combo-box .combo-box-popup .check-box {
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.check-combo-box .combo-box-popup .check-box .box {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #90caf9;
+}
+
+.check-combo-box .combo-box-popup .check-box:selected .box {
+    -fx-background-color: #90caf9;
+}

@@ -1,6 +1,7 @@
 package com.dashapp.controller;
 
 import com.dashapp.model.*;
+import com.dashapp.util.AlertManager;
 import com.dashapp.view.ViewNavigator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -76,24 +77,29 @@ public class VisualizzaController {
         // Riduci overlay scuro (opzionale)
         videoContainer.setStyle("-fx-background-color: transparent;");
 
-        // Gestisci comparsa dei controlli
-        videoContainer.setOnMouseEntered(e -> showControls());
-        videoContainer.setOnMouseMoved(e -> showControls());
-        videoContainer.setOnMouseExited(e -> startFadeOut());
-
         commentiButton.setOnAction(e -> mostraCommenti());
         noteButton.setOnAction(e -> mostraNote());
 
         pubblicaButton.setOnAction(e -> pubblicaCommento());
         aggiungiNotaButton.setOnAction(e -> apriModalInserimentoNota());
+        scaricaButton.setOnAction(e -> gestisciDowload());
 
         titoloLabel.setText(brano.getTitolo()+" caricato da "+vis.getUtente(brano.getUtente()));
         artistaLabel.setText("Autori: "+brano.getAutori());
         genereLabel.setText("Genere: "+brano.getGenere().toString());
-        annoLabel.setText("Anno: "+ brano.getAnno());//NB : anno può essere sconosciuto
+        annoLabel.setText("Anno: "+ (brano.getAnno() == null ? "Non conosciuto":brano.getAnno()));//NB : anno può essere sconosciuto
     }
 
-    private void showControls() {
+        private void gestisciDowload() {
+            Stage stage = (Stage) scaricaButton.getScene().getWindow();
+            int res = vis.scaricaBrano(stage, brano.getFile());
+            if (res == 1)
+                AlertManager.showConfirmation("Brano "+brano.getTitolo()+" caricato con successo");
+            else if (res == -1)
+                AlertManager.showError("Errore nello scaricamento del brano "+brano.getTitolo());
+        }
+
+        private void showControls() {
         if (fadeOutTimeline != null) {
             fadeOutTimeline.stop();
         }
@@ -134,106 +140,130 @@ public class VisualizzaController {
         commentiButton.getStyleClass().remove("active-tab");
     }
 
-    private void setupMedia() {
-        String file = brano.getFile();
-        File videoFile = new File(file);
+        private void setupMedia() {
+            String file = brano.getFile();
+            File mediaFile = new File(file);
 
-        if (!videoFile.exists()) {
-            System.out.println("File non trovato: " + file);
-            return;
-        }
+            if (!mediaFile.exists()) {
+                System.out.println("File non trovato: " + file);
+                return;
+            }
 
-        String uri = Paths.get(file).toUri().toString();
-        boolean isAudio = file.toLowerCase().endsWith(".mp3") || file.toLowerCase().endsWith(".wav");
+            String uri = mediaFile.toURI().toString();
+            String lower = file.toLowerCase();
 
-        mediaView.setVisible(!isAudio);
-        mediaView.setManaged(!isAudio);
-        audioPlaceholder.setVisible(isAudio);
-        audioPlaceholder.setManaged(isAudio);
+            boolean isAudio = lower.endsWith(".mp3") || lower.endsWith(".wav");
+            boolean isVideo = lower.endsWith(".mp4") || lower.endsWith(".m4v") || lower.endsWith(".mov");
+            boolean isImage = lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".gif");
 
-        mediaView.setPreserveRatio(true);
+            // Gestione immagine
+            if (isImage) {
+                System.out.println("Caricamento immagine da: " + uri);
+                audioPlaceholder.setImage(new Image(uri));
+                audioPlaceholder.setVisible(true);
+                audioPlaceholder.setManaged(true);
 
-        // Bind MediaView dinamico al container
-        mediaView.fitWidthProperty().bind(videoContainer.widthProperty());
-        mediaView.fitHeightProperty().bind(videoContainer.heightProperty());
+                mediaView.setVisible(false);
+                mediaView.setManaged(false);
+                return; // Esci subito, niente MediaPlayer
+            }
+            else if (isVideo || isAudio) {
+                // Se non è immagine, reset imageView
 
-        if (isAudio) {
-            InputStream imgStream = getClass().getResourceAsStream("/resources/images/placeholder.gif");
-            if (imgStream != null) {
-                audioPlaceholder.setImage(new Image(imgStream));
+                videoContainer.setOnMouseEntered(e -> showControls());
+                videoContainer.setOnMouseMoved(e -> showControls());
+                videoContainer.setOnMouseExited(e -> startFadeOut());
+
+                audioPlaceholder.setVisible(false);
+                audioPlaceholder.setManaged(false);
+
+                // Imposta visibilità dinamica
+                mediaView.setVisible(isVideo);
+                mediaView.setManaged(isVideo);
+
+                audioPlaceholder.setVisible(isAudio);
+                audioPlaceholder.setManaged(isAudio);
+
+                // Se audio, mostra placeholder
+                if (isAudio) {
+                    InputStream imgStream = getClass().getResourceAsStream("/resources/images/placeholder.gif");
+                    if (imgStream != null) {
+                        audioPlaceholder.setImage(new Image(imgStream));
+                    }
+                }
+
+                mediaView.setPreserveRatio(true);
+                mediaView.fitWidthProperty().bind(videoContainer.widthProperty());
+                mediaView.fitHeightProperty().bind(videoContainer.heightProperty());
+
+                try {
+                    Media media = new Media(uri);
+                    mediaPlayer = new MediaPlayer(media);
+                    ViewNavigator.setRisorsa(mediaPlayer);
+
+                    mediaView.setMediaPlayer(mediaPlayer);
+
+                    // Gestione slider e pulsanti come prima
+                    progressSlider.maxProperty().bind(
+                            Bindings.createDoubleBinding(
+                                    () -> mediaPlayer.getTotalDuration() != null ? mediaPlayer.getTotalDuration().toSeconds() : 0,
+                                    mediaPlayer.totalDurationProperty()
+                            )
+                    );
+
+                    mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
+                        if (!progressSlider.isValueChanging()) {
+                            progressSlider.setValue(newTime.toSeconds());
+                        }
+                    });
+
+                    progressSlider.setOnMouseReleased(e ->
+                            mediaPlayer.seek(Duration.seconds(progressSlider.getValue()))
+                    );
+
+                    mediaPlayer.volumeProperty().bind(volumeSlider.valueProperty());
+
+                    toggleButton.setOnAction(e -> {
+                        MediaPlayer.Status status = mediaPlayer.getStatus();
+                        if (status == MediaPlayer.Status.PLAYING) {
+                            mediaPlayer.pause();
+                            toggleButton.setText("▶");
+                        } else {
+                            mediaPlayer.play();
+                            toggleButton.setText("⏸");
+                        }
+                    });
+
+                    rewindButton.setOnAction(e ->
+                            mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.seconds(5))));
+                    forwardButton.setOnAction(e ->
+                            mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(5))));
+
+                    timeLabel.textProperty().bind(Bindings.createStringBinding(() ->
+                                    formatTime(mediaPlayer.getCurrentTime()) + " / " +
+                                            formatTime(mediaPlayer.getTotalDuration()),
+                            mediaPlayer.currentTimeProperty(),
+                            mediaPlayer.totalDurationProperty()));
+
+                    mediaPlayer.setOnReady(() -> {
+                        toggleButton.setText("⏸");
+                        mediaPlayer.play();
+                    });
+
+                    mediaPlayer.setOnEndOfMedia(() -> {
+                        toggleButton.setText("▶");
+                        branoTerminato = true;
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
-        try {
-            Media media = new Media(uri);
-            mediaPlayer = new MediaPlayer(media);
-            ViewNavigator.setRisorsa(mediaPlayer);
-            mediaView.setMediaPlayer(mediaPlayer);
-
-            // Binding dinamico slider progress
-            progressSlider.maxProperty().bind(
-                    Bindings.createDoubleBinding(
-                            () -> mediaPlayer.getTotalDuration() != null ? mediaPlayer.getTotalDuration().toSeconds() : 0,
-                            mediaPlayer.totalDurationProperty()
-                    )
-            );
-
-            // Ascolta variazione tempo corrente
-            mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
-                if (!progressSlider.isValueChanging()) {
-                    progressSlider.setValue(newTime.toSeconds());
-                }
-            });
-
-            // Se slider cambia, aggiorna il video
-            progressSlider.setOnMouseReleased(e ->
-                    mediaPlayer.seek(Duration.seconds(progressSlider.getValue()))
-            );
-
-            // Volume slider binding
-            mediaPlayer.volumeProperty().bind(volumeSlider.valueProperty());
-
-            // Play/Pause button
-            toggleButton.setOnAction(e -> {
-                MediaPlayer.Status status = mediaPlayer.getStatus();
-                if (status == MediaPlayer.Status.PLAYING) {
-                    mediaPlayer.pause();
-                    toggleButton.setText("▶");
-                } else {
-                    mediaPlayer.play();
-                    toggleButton.setText("⏸");
-                }
-            });
-
-            rewindButton.setOnAction(e ->
-                    mediaPlayer.seek(mediaPlayer.getCurrentTime().subtract(Duration.seconds(5))));
-            forwardButton.setOnAction(e ->
-                    mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(5))));
-
-            // Formatta tempo dinamico con Binding
-            timeLabel.textProperty().bind(Bindings.createStringBinding(() ->
-                            formatTime(mediaPlayer.getCurrentTime()) + " / " +
-                                    formatTime(mediaPlayer.getTotalDuration()),
-                    mediaPlayer.currentTimeProperty(),
-                    mediaPlayer.totalDurationProperty()));
-
-            mediaPlayer.setOnReady(() -> {
-                toggleButton.setText("⏸");
-                mediaPlayer.play();
-            });
-
-            mediaPlayer.setOnEndOfMedia(() -> {
-                toggleButton.setText("▶");
-                branoTerminato = true;
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
-    private String formatTime(Duration d) {
+        private String formatTime(Duration d) {
         if(d == null)
             return "00:00";
         else {
@@ -387,8 +417,6 @@ public class VisualizzaController {
             Label strumentiLabel = new Label("Strumenti: " +
                     String.join(", ", n.getStrumenti()));
             strumentiLabel.getStyleClass().add("note-extra");
-            //n.getStrumenti().forEach(System.out::println);
-            //n.getEsecutori().forEach(System.out::println);
             // Esecutori
             Label esecutoriLabel = new Label("Esecutori: " +
                     String.join(", ", n.getEsecutori()));

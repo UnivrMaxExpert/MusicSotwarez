@@ -32,7 +32,7 @@ public class CaricaDao {
             stmt.setString(2, brano.getTitolo());
             stmt.setString(3, brano.getGenere().toString());
             stmt.setString(4, brano.getFile());
-            stmt.setInt(5, brano.getAnno());
+            stmt.setObject(5, brano.getAnno(), java.sql.Types.INTEGER);
             stmt.setBoolean(6, brano.isConcerto());
 
             int affectedRows = stmt.executeUpdate();
@@ -299,41 +299,4 @@ public class CaricaDao {
         return destination.toAbsolutePath().toString();
     }
 
-    /**
-     * Permette di scaricare un brano (copia su destinazione selezionata dall'utente).
-     */
-    public String scaricaBrano(Stage stage, String percorsoSorgente) {
-        if (percorsoSorgente == null || percorsoSorgente.isBlank()) {
-            System.out.println("Percorso del brano non valido.");
-            return null;
-        }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Salva brano come...");
-        fileChooser.setInitialFileName(Paths.get(percorsoSorgente).getFileName().toString());
-
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("File Audio", "*.mp3"),
-                new FileChooser.ExtensionFilter("File Video", "*.mp4"),
-                new FileChooser.ExtensionFilter("Documenti PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Immagini JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("Immagini JPEG", "*.jpeg")
-        );
-
-        File destinazione = fileChooser.showSaveDialog(stage);
-        if (destinazione != null) {
-            try {
-                Path sorgente = Paths.get(percorsoSorgente);
-                Files.copy(sorgente, destinazione.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("Brano salvato in: " + destinazione.getAbsolutePath());
-                return destinazione.getAbsolutePath();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Errore durante la copia del file.");
-            }
-        } else {
-            System.out.println("Salvataggio annullato dall'utente.");
-        }
-        return null;
-    }
 }

@@ -8,7 +8,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-
+<?import org.controlsfx.control.CheckComboBox?>
+<?import javafx.scene.control.ComboBox?>
 <BorderPane fx:id="root"
             stylesheets="@../css/catalogo-style.css"
             styleClass="catalog-background"
@@ -21,8 +22,11 @@
         <VBox fx:id="sidebar" styleClass="sidebar">
             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
             <Label styleClass="sidebar-title" text="Filtri" />
-            <JFXTextField promptText="Cerca per titolo" />
-            <JFXTextField promptText="Artista" />
+            <JFXTextField fx:id="tit" promptText="Cerca per titolo" styleClass="sidebar-textfield"/>
+            <CheckComboBox fx:id="aut" styleClass="check-combo-box"/>
+            <CheckComboBox fx:id="ese" styleClass="check-combo-box"/>
+            <CheckComboBox fx:id="str" styleClass="check-combo-box"/>
+            <JFXTextField fx:id="gen" promptText="Cerca per genere" styleClass="sidebar-textfield"/>
         </VBox>
     </left>
 

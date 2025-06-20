@@ -29,7 +29,7 @@
                <StackPane fx:id="videoContainer" alignment="CENTER" minHeight="550" prefWidth="980" styleClass="video-wrapper" xmlns:fx="http://javafx.com/fxml">
 
                   <!-- Placeholder per audio -->
-                  <ImageView fx:id="audioPlaceholder" fitHeight="600" fitWidth="980" preserveRatio="false" styleClass="audio-placeholder" visible="false" />
+                  <ImageView fx:id="audioPlaceholder" fitHeight="600" fitWidth="980" preserveRatio="false" styleClass="audio-placeholder" visible="true" />
 
                   <!-- Video player -->
                   <MediaView fx:id="mediaView" fitWidth="980" preserveRatio="true" styleClass="media-view" />

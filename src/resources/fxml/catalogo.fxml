@@ -1,46 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.controlsfx.control.*?>
 
-<BorderPane fx:id="root"
-            stylesheets="@../css/catalogo-style.css"
-            styleClass="catalog-background"
-            xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.dashapp.controller.CatalogoController">
+<BorderPane fx:id="root" styleClass="catalog-background" stylesheets="@../css/catalogo-style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dashapp.controller.CatalogoController">
 
     <!-- Sidebar -->
     <left>
         <VBox fx:id="sidebar" styleClass="sidebar">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
             <Label styleClass="sidebar-title" text="Filtri" />
-            <JFXTextField promptText="Cerca per titolo" />
-            <JFXTextField promptText="Artista" />
+            <JFXTextField fx:id="tit" promptText="Cerca per titolo" styleClass="sidebar-textfield" />
+            <CheckComboBox fx:id="aut" styleClass="check-combo-box" />
+            <CheckComboBox fx:id="ese" styleClass="check-combo-box" />
+            <CheckComboBox fx:id="str" styleClass="check-combo-box" />
+            <JFXTextField fx:id="gen" promptText="Cerca per genere" styleClass="sidebar-textfield" />
         </VBox>
     </left>
 
     <!-- Barra superiore -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
-            <JFXButton fx:id="filterButton"
-                       onAction="#toggleSidebar"
-                       text="🔍"
-                       prefHeight="60"
-                       prefWidth="60"
-                       minHeight="60"
-                       minWidth="60"
-                       maxHeight="60"
-                       maxWidth="60"
-                       styleClass="icon-button"/>
-            <Text text="Catalogo Brani" styleClass="catalog-title"/>
-            <fx:include source="navbar.fxml" fx:id="nav"/>
+            <JFXButton fx:id="filterButton" maxHeight="60" maxWidth="60" minHeight="60" minWidth="60" onAction="#toggleSidebar" prefHeight="60" prefWidth="60" styleClass="icon-button" text="🔍" />
+            <Text styleClass="catalog-title" text="Catalogo Brani" />
+            <fx:include fx:id="nav" source="navbar.fxml" />
         </HBox>
     </top>
 
@@ -48,7 +35,7 @@
     <center>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" styleClass="scroll-pane-custom">
             <VBox fx:id="braniContainer" spacing="15">
-                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
                 <!-- I brani vengono aggiunti dinamicamente qui -->
             </VBox>
         </ScrollPane>
